@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "RaylibUE",
+	"Description": "RayLib overlay for Unreal Engine.",
+	"Category": "Rendering",
+	"CreatedBy": "DarknessFX",
+	"CreatedByURL": "https://github.com/DarknessFX/RaylibUE",
+	"DocsURL": "https://github.com/DarknessFX/RaylibUE/README.md",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/DarknessFX/RaylibUE/issues",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+  "IsExperimentalVersion": true,
+  "Installed": true,
+	"Modules": [
+		{
+			"Name": "RaylibUE",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
