@@ -10,6 +10,10 @@
 #include "Widgets/SWidget.h"
 #include "Input/Reply.h"
 #include "Input/Events.h"
+#if WITH_EDITOR
+#include "UnrealEd.h" 
+#include "Editor.h" 
+#endif
 
 // WinAPI
 extern "C" {
@@ -62,6 +66,15 @@ void FRaylibUEModule::OnGameModeInitialized(AGameModeBase* aGameMode) {
   GameMode = aGameMode;
   GameViewport = GameMode->GetWorld()->GetGameViewport();
 
+#if WITH_EDITOR
+  if (GEditor->GetActiveViewport() == GameViewport->Viewport) {
+    FString ViewportErrorMsg = TEXT("RaylibUE: Cannot overlay while playing on editor viewport (yet)\nPlease change mode to Play > New Editor Window (PIE).");
+    UE_LOG(LogRaylibUE, Warning, TEXT("%s"), *ViewportErrorMsg);
+    GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, ViewportErrorMsg);
+    return;
+  }
+#endif
+
   // Cleanup delegates if PIE or second window.
   RemoveDelegates();
 
@@ -94,10 +107,11 @@ void FRaylibUEModule::InitRaylibOverlay() {
   SetWindowLongPtrA(hwndRaylib, GWLP_HWNDPARENT, (LONG_PTR)hwndUE);
   
   GameViewport->GetWindow()->GetNativeWindow()->SetWindowFocus();
+  UE_LOG(LogRaylibUE, Log, TEXT("RaylibOverlay initialized."));
 }
 
 void FRaylibUEModule::SetRaylibWindowState(ERlWindowState WindowState) {
-  // UE_LOG(LogRaylibUE, Log, TEXT("State: %d"), static_cast<int32>(WindowState));
+  UE_LOG(LogRaylibUE, Log, TEXT("State: %d"), static_cast<int32>(WindowState));
   switch (WindowState) {
     case ERlWindowState::None:
       break;
@@ -179,6 +193,8 @@ void FRaylibUEModule::RemoveDelegates() {
     GameViewport->Viewport->ViewportResizedEvent.Remove(hOnViewportResized);
   }
   bIsWindowOpen = false;
+  UE_LOG(LogRaylibUE, Log, TEXT("RaylibOverlay closed.."));
+
 }
 
 // Window Events

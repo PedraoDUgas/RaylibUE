@@ -19,8 +19,14 @@ public class RaylibUE : ModuleRules {
 				"SlateCore",
         "InputCore",
     });
-		
-		DynamicallyLoadedModuleNames.AddRange(new string[] { });
+
+    if (Target.bBuildEditor == true) {
+      PrivateDependencyModuleNames.AddRange(new string[] {
+        "UnrealEd",
+      });
+    }
+
+    DynamicallyLoadedModuleNames.AddRange(new string[] { });
 
     // RayLib
     PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private/raylib/include"));
