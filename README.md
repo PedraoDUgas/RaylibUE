@@ -12,22 +12,21 @@
 
            DarknessFX @ https://dfx.lv | X : @DrkFX
 
-# RaylibUE plugin For Unreal Engine 5
+# RaylibUE Plugin For Unreal Engine 5
 
 <img src=".git_img/RaylibUE_banner.png" alt="RaylibUE" width="640" />
 
 ## About
 
-RaylibUE plugin seamlessly bridges [Raylib](https://www.raylib.com/)'s powerful 2D/3D drawing API with [Unreal Engine](https://www.unrealengine.com)'s intuitive Blueprint system.<br/>
-Draw shapes, text, lines, textures and more, directly on your game viewport via transparent overlay, no code barriers.<br/>
+RaylibUE plugin seamlessly bridges [Raylib](https://www.raylib.com/)'s powerful 2D/3D drawing API with [Unreal Engine](https://www.unrealengine.com)'s intuitive Blueprint system. Draw shapes, text, lines, textures and more, directly on your game viewport via transparent overlay, no code barriers.
 
 ## Why RaylibUE?
 
-- Educational Bridge: Ideal for teachers/students, learn with Raylib's simplicity alongside Unreal Engine's depth, from basic shapes to 3D models.
-- Raylib Fidelity: 50+ Raylib draw functions as Blueprint nodes (e.g., DrawCircle, DrawText, DrawModelEx) with exact parameters for 1:1 learning.
-- Independent Rendering: RaylibUE uses Raylib graphics API (OpenGL), running independent of Unreal Engine’s graphics settings, and fully compatible with DirectX 11, DirectX 12 and Vulkan projects.
-- Non-Intrusive Overlay: Renders to an independent overlay window atop the Unreal Engine game viewport, syncing on resize, drag, or maximize, while preserving Unreal Engine input and focus.
-- Command Buffer: Queue and update render draw commands with handles, reorder, purge by type, or bulk-set commands for real-world pipeline practice.
+- Educational Stating Point: Ideal for teachers and students, learn with Raylib's simplicity alongside Unreal Engine's depth, from basic shapes to 3D models.
+- Raylib Fidelity: 50+ Raylib draw functions as Blueprint nodes *(e.g., DrawCircle, DrawText, DrawModelEx)* with exact parameters for 1:1 learning.
+- Independent Rendering: RaylibUE uses Raylib graphics API *(OpenGL)*, running independent of Unreal Engine’s graphics settings, and fully compatible with DirectX 11, DirectX 12 and Vulkan projects.
+- Non-Intrusive Overlay: Renders to an independent overlay window atop the Unreal Engine game viewport, syncing on resize, move, maximize or minimize, while preserving Unreal Engine input, focus and performance.
+- Command Buffer: Queue and update render draw commands with handles, reorder, purge by type, or bulk-set commands for real-world renderer pipeline practice.
 
 ## Features
 | Category | Highlights |
@@ -38,7 +37,7 @@ Draw shapes, text, lines, textures and more, directly on your game viewport via 
 | **Textures** | Billboard, NPatch, pro UVs |
 | **Utils** |  Camera, FPS counter, grid, ray |
 
-- **Blueprint Chain**: All nodes return OutShape pins, enabling to connect values to Update nodes for zero-friction development.
+- **Blueprint Chain**: All nodes return OutShape pins, allowing direct connection to Update nodes for zero-friction development.
 <img src=".git_img/screenshot_07.png" alt="RaylibUE" width="640" />
 
 - **C++ Friendly**: Static calls, e.g., `URaylibUEBPLibrary::DrawPixel(10, 10, FLinearColor::Red, ID, Shape);`.
@@ -56,26 +55,24 @@ URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yell
 3. Create a new folder named *Plugins* at *YourProject/*.
 4. Copy **RaylibUE** to *YourProject/Plugins/* folder.
 5. Regenerate project files. (right-click *YourProject.uproject* and Generate Project Files).
-6. Open *YourProject.uproject* and reply that you want to buld the project.
-7. Inside the *Unreal Editor*, go to menu Edit > Plugins and enable **RaylibUE** plugin.
-8. Confirm to restart the editor.
-
+6. Open *YourProject.uproject* and reply **Yes** to buld the project.
+<br/><br/>
 > __Dependencies :__
->- Windows (WinAPI overlay)
->- UE 5.6.1 (can build to previous Unreal Engine versions, not tested)
+>- Windows *(WinAPI overlay)*
+>- UE 5.6.1 *(Can be built for earlier Unreal Engine versions; not tested)*.
 >- Raylib library is bundled.
->- Visual Studio or VS Code, more information at [Unreal Engine: Setting Up Visual Studio](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine) and [Setting Up Visual Studio for Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5-6-documentation).
+>- Visual Studio or VS Code to build from source, more information at [Unreal Engine: Setting Up Visual Studio](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine) and [Setting Up Visual Studio for Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5-6-documentation).
+
 
 ##  Quick start
-
-<img src=".git_img/screenshot_02.png" alt="RaylibUE" width="640" />
 
 1. Open Level Blueprint.
 2. Event BeginPlay, add a new node: Raylib DrawText.
 3. Set DrawText node to PosX 30, PosY 30, Text "Hello Raylib", FontSize: 64, Color: Green
 4. Play.
 
-Next step: See the image above to make your text grow every frame.
+Next Step: See the image below to make your text grow each frame.
+<img src=".git_img/screenshot_02.png" alt="RaylibUE" width="640" />
 
 ##  Sample
 *(Under construction)*
