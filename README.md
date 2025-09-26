@@ -25,9 +25,9 @@ Draw shapes, text, lines, textures and more, directly on your game viewport via 
 
 - Educational Bridge: Ideal for teachers/students, learn with Raylib's simplicity alongside Unreal Engine's depth, from basic shapes to 3D models.
 - Raylib Fidelity: 50+ Raylib draw functions as Blueprint nodes (e.g., DrawCircle, DrawText, DrawModelEx) with exact parameters for 1:1 learning.
-- Independent Render: RaylibUE render on it's raylib graphics API (OpenGL), it's independent of your graphics settings and is compatible with DirectX11/12 or Vulkan Unreal Engine projects.
-- Non-Intrusive Overlay: Rendering to an independet overlay window atop UE game viewport, syncs on resize/drag/maximize, preserves UE input/focus.
-- Command Buffer: Queue/update commands with handles, reorder, purge by type, or bulk set for real-world pipeline practice.
+- Independent Rendering: RaylibUE uses Raylib graphics API (OpenGL), running independent of Unreal Engine’s graphics settings, and fully compatible with DirectX 11, DirectX 12 and Vulkan projects.
+- Non-Intrusive Overlay: Renders to an independent overlay window atop the Unreal Engine game viewport, syncing on resize, drag, or maximize, while preserving Unreal Engine input and focus.
+- Command Buffer: Queue and update render draw commands with handles, reorder, purge by type, or bulk-set commands for real-world pipeline practice.
 
 ## Features
 | Category | Highlights |
