@@ -26,7 +26,7 @@ protected:
   TWeakObjectPtr<AGameModeBase> GameMode;
   TWeakObjectPtr<UGameViewportClient> GameViewport;
   FIntPoint ViewportSize;
-  FVector2f rlWindowSize;
+  FVector2D rlWindowSize;
   FIntPoint ueWindowPosition;
 
   // Events
