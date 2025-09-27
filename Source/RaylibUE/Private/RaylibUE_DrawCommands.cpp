@@ -9,8 +9,8 @@ int32 FRlDrawCommandBuffer::Add(FRlDrawCommand& Cmd) {
   return NewID;
 }
 
-bool FRlDrawCommandBuffer::Update(int32 HandleID, const FRlDrawCommand& Cmd) {
-  if (int32* IndexPtr = IDToIndex.Find(HandleID)) {
+bool FRlDrawCommandBuffer::Update(const FRlDrawCommand& Cmd) {
+  if (int32* IndexPtr = IDToIndex.Find(Cmd.CommandID )) {
     int32 Index = *IndexPtr;
     if (rlDrawCommands.IsValidIndex(Index)) {
       FRlDrawCommand& Target = rlDrawCommands[Index];
@@ -56,10 +56,10 @@ bool FRlDrawCommandBuffer::Update(int32 HandleID, const FRlDrawCommand& Cmd) {
   return false;
 }
 
-bool FRlDrawCommandBuffer::Remove(int32 HandleID) {
-  if (int32* IndexPtr = IDToIndex.Find(HandleID)) {
+bool FRlDrawCommandBuffer::Remove(int32 CommandID ) {
+  if (int32* IndexPtr = IDToIndex.Find(CommandID )) {
     int32 Index = *IndexPtr;
-    IDToIndex.Remove(HandleID);
+    IDToIndex.Remove(CommandID );
     if (rlDrawCommands.IsValidIndex(Index)) {
       int32 LastIndex = rlDrawCommands.Num() - 1;
       if (Index != LastIndex) {

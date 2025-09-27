@@ -8,226 +8,202 @@ URaylibUEBPLibrary::URaylibUEBPLibrary(const FObjectInitializer& ObjectInitializ
 
 FRlDrawCommandBuffer& URaylibUEBPLibrary::rlCmdBuf = FRaylibUEModule::rlDrawCommandsBuffer;
 
-void URaylibUEBPLibrary::DrawPixel(int32 PosX, int32 PosY, FLinearColor Color, int32& OutHandleID, FRlDrawPixel& OutShape) {
+void URaylibUEBPLibrary::DrawPixel(int32 PosX, int32 PosY, FLinearColor Color, FRlDrawPixel& Pixel) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPixel;
   Cmd.Position = FIntPoint(PosX, PosY);
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Pixel.CommandID = ID;
+  Pixel.PosX = PosX;
+  Pixel.PosY = PosY;
+  Pixel.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawPixelUpdate(int32 HandleID, const FRlDrawPixel& InShape, int32& OutHandleID, FRlDrawPixel& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPixel();
-    return;
+FRlDrawPixel URaylibUEBPLibrary::DrawPixelUpdate(const FRlDrawPixel& Pixel) {
+  FRlDrawPixel OutPixel;
+  if (Pixel.CommandID < 0) {
+    OutPixel.CommandID = -1;
+    OutPixel = FRlDrawPixel();
+    return OutPixel;
   }
 
+  OutPixel = Pixel;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawPixel;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(Pixel.PosX, Pixel.PosY);
+  UpdateCmd.Color = Pixel.Color;
+  OutPixel.CommandID = rlCmdBuf.Update(UpdateCmd) ? Pixel.CommandID : -1; 
+  return OutPixel;
 }
 
-void URaylibUEBPLibrary::DrawPixelV(FIntPoint Position, FLinearColor Color, int32& OutHandleID, FRlDrawPixelV& OutShape) {
+void URaylibUEBPLibrary::DrawPixelV(FIntPoint Position, FLinearColor Color, FRlDrawPixelV& PixelV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPixelV;
   Cmd.Position = Position;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  PixelV.CommandID = ID;
+  PixelV.Position = Position;
+  PixelV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawPixelVUpdate(int32 HandleID, const FRlDrawPixelV& InShape, int32& OutHandleID, FRlDrawPixelV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPixelV();
-    return;
+FRlDrawPixelV URaylibUEBPLibrary::DrawPixelVUpdate(const FRlDrawPixelV& PixelV) {
+  FRlDrawPixelV OutPixelV;
+  if (PixelV.CommandID < 0) {
+    OutPixelV.CommandID = -1;
+    OutPixelV = FRlDrawPixelV();
+    return OutPixelV;
   }
 
+  OutPixelV = PixelV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawPixelV;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = PixelV.Position;
+  UpdateCmd.Color = PixelV.Color;
+  OutPixelV.CommandID = rlCmdBuf.Update(UpdateCmd) ? PixelV.CommandID : -1; 
+  return OutPixelV;
 }
 
-void URaylibUEBPLibrary::DrawLine(int32 StartPosX, int32 StartPosY, int32 EndPosX, int32 EndPosY, FLinearColor Color, int32& OutHandleID, FRlDrawLine& OutShape) {
+void URaylibUEBPLibrary::DrawLine(int32 StartPosX, int32 StartPosY, int32 EndPosX, int32 EndPosY, FLinearColor Color, FRlDrawLine& Line) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLine;
   Cmd.StartPos = FIntPoint(StartPosX, StartPosY);
   Cmd.EndPos = FIntPoint(EndPosX, EndPosY);
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPosX = StartPosX;
-  OutShape.StartPosY = StartPosY;
-  OutShape.EndPosX = EndPosX;
-  OutShape.EndPosY = EndPosY;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Line.CommandID = ID;
+  Line.StartPosX = StartPosX;
+  Line.StartPosY = StartPosY;
+  Line.EndPosX = EndPosX;
+  Line.EndPosY = EndPosY;
+  Line.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineUpdate(int32 HandleID, const FRlDrawLine& InShape, int32& OutHandleID, FRlDrawLine& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLine();
-    return;
+FRlDrawLine URaylibUEBPLibrary::DrawLineUpdate(const FRlDrawLine& Line) {
+  FRlDrawLine OutLine;
+  if (Line.CommandID < 0) {
+    OutLine.CommandID = -1;
+    OutLine = FRlDrawLine();
+    return OutLine;
   }
 
+  OutLine = Line;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLine;
-  UpdateCmd.StartPos = FIntPoint(InShape.StartPosX, InShape.StartPosY);
-  UpdateCmd.EndPos = FIntPoint(InShape.EndPosX, InShape.EndPosY);
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = FIntPoint(Line.StartPosX, Line.StartPosY);
+  UpdateCmd.EndPos = FIntPoint(Line.EndPosX, Line.EndPosY);
+  UpdateCmd.Color = Line.Color;
+  OutLine.CommandID = rlCmdBuf.Update(UpdateCmd) ? Line.CommandID : -1; 
+  return OutLine;
 }
 
-void URaylibUEBPLibrary::DrawLineV(FIntPoint StartPos, FIntPoint EndPos, FLinearColor Color, int32& OutHandleID, FRlDrawLineV& OutShape) {
+void URaylibUEBPLibrary::DrawLineV(FIntPoint StartPos, FIntPoint EndPos, FLinearColor Color, FRlDrawLineV& LineV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineV;
   Cmd.StartPos = StartPos;
   Cmd.EndPos = EndPos;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineV.CommandID = ID;
+  LineV.StartPos = StartPos;
+  LineV.EndPos = EndPos;
+  LineV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineVUpdate(int32 HandleID, const FRlDrawLineV& InShape, int32& OutHandleID, FRlDrawLineV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineV();
-    return;
+FRlDrawLineV URaylibUEBPLibrary::DrawLineVUpdate(const FRlDrawLineV& LineV) {
+  FRlDrawLineV OutLineV;
+  if (LineV.CommandID < 0) {
+    OutLineV.CommandID = -1;
+    OutLineV = FRlDrawLineV();
+    return OutLineV;
   }
 
+  OutLineV = LineV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineV;
-  UpdateCmd.StartPos = InShape.StartPos;
-  UpdateCmd.EndPos = InShape.EndPos;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = LineV.StartPos;
+  UpdateCmd.EndPos = LineV.EndPos;
+  UpdateCmd.Color = LineV.Color;
+  OutLineV.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineV.CommandID : -1; 
+  return OutLineV;
 }
 
-void URaylibUEBPLibrary::DrawLineEx(FIntPoint StartPos, FIntPoint EndPos, float Thick, FLinearColor Color, int32& OutHandleID, FRlDrawLineEx& OutShape) {
+void URaylibUEBPLibrary::DrawLineEx(FIntPoint StartPos, FIntPoint EndPos, float Thick, FLinearColor Color, FRlDrawLineEx& LineEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineEx;
   Cmd.StartPos = StartPos;
   Cmd.EndPos = EndPos;
   Cmd.Thick = Thick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.Thick = Thick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineEx.CommandID = ID;
+  LineEx.StartPos = StartPos;
+  LineEx.EndPos = EndPos;
+  LineEx.Thick = Thick;
+  LineEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineExUpdate(int32 HandleID, const FRlDrawLineEx& InShape, int32& OutHandleID, FRlDrawLineEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineEx();
-    return;
+FRlDrawLineEx URaylibUEBPLibrary::DrawLineExUpdate(const FRlDrawLineEx& LineEx) {
+  FRlDrawLineEx OutLineEx;
+  if (LineEx.CommandID < 0) {
+    OutLineEx.CommandID = -1;
+    OutLineEx = FRlDrawLineEx();
+    return OutLineEx;
   }
 
+  OutLineEx = LineEx;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineEx;
-  UpdateCmd.StartPos = InShape.StartPos;
-  UpdateCmd.EndPos = InShape.EndPos;
-  UpdateCmd.Thick = InShape.Thick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = LineEx.StartPos;
+  UpdateCmd.EndPos = LineEx.EndPos;
+  UpdateCmd.Thick = LineEx.Thick;
+  UpdateCmd.Color = LineEx.Color;
+  OutLineEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineEx.CommandID : -1; 
+  return OutLineEx;
 }
 
-void URaylibUEBPLibrary::DrawLineBezier(FIntPoint StartPos, FIntPoint EndPos, float Thick, FLinearColor Color, int32& OutHandleID, FRlDrawLineBezier& OutShape) {
+void URaylibUEBPLibrary::DrawLineBezier(FIntPoint StartPos, FIntPoint EndPos, float Thick, FLinearColor Color, FRlDrawLineBezier& LineBezier) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineBezier;
   Cmd.StartPos = StartPos;
   Cmd.EndPos = EndPos;
   Cmd.Thick = Thick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.Thick = Thick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineBezier.CommandID = ID;
+  LineBezier.StartPos = StartPos;
+  LineBezier.EndPos = EndPos;
+  LineBezier.Thick = Thick;
+  LineBezier.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineBezierUpdate(int32 HandleID, const FRlDrawLineBezier& InShape, int32& OutHandleID, FRlDrawLineBezier& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineBezier();
-    return;
+FRlDrawLineBezier URaylibUEBPLibrary::DrawLineBezierUpdate(const FRlDrawLineBezier& LineBezier) {
+  FRlDrawLineBezier OutLineBezier;
+  if (LineBezier.CommandID < 0) {
+    OutLineBezier.CommandID = -1;
+    OutLineBezier = FRlDrawLineBezier();
+    return OutLineBezier;
   }
 
+  OutLineBezier = LineBezier;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineBezier;
-  UpdateCmd.StartPos = InShape.StartPos;
-  UpdateCmd.EndPos = InShape.EndPos;
-  UpdateCmd.Thick = InShape.Thick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = LineBezier.StartPos;
+  UpdateCmd.EndPos = LineBezier.EndPos;
+  UpdateCmd.Thick = LineBezier.Thick;
+  UpdateCmd.Color = LineBezier.Color;
+  OutLineBezier.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineBezier.CommandID : -1; 
+  return OutLineBezier;
 }
 
-void URaylibUEBPLibrary::DrawLineBezierQuad(FIntPoint StartPos, FIntPoint EndPos, FIntPoint ControlPos, float Thick, FLinearColor Color, int32& OutHandleID, FRlDrawLineBezierQuad& OutShape) {
+void URaylibUEBPLibrary::DrawLineBezierQuad(FIntPoint StartPos, FIntPoint EndPos, FIntPoint ControlPos, float Thick, FLinearColor Color, FRlDrawLineBezierQuad& LineBezierQuad) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineBezierQuad;
   Cmd.StartPos = StartPos;
@@ -235,41 +211,37 @@ void URaylibUEBPLibrary::DrawLineBezierQuad(FIntPoint StartPos, FIntPoint EndPos
   Cmd.Position = ControlPos;
   Cmd.Thick = Thick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.ControlPos = ControlPos;
-  OutShape.Thick = Thick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineBezierQuad.CommandID = ID;
+  LineBezierQuad.StartPos = StartPos;
+  LineBezierQuad.EndPos = EndPos;
+  LineBezierQuad.ControlPos = ControlPos;
+  LineBezierQuad.Thick = Thick;
+  LineBezierQuad.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineBezierQuadUpdate(int32 HandleID, const FRlDrawLineBezierQuad& InShape, int32& OutHandleID, FRlDrawLineBezierQuad& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineBezierQuad();
-    return;
+FRlDrawLineBezierQuad URaylibUEBPLibrary::DrawLineBezierQuadUpdate(const FRlDrawLineBezierQuad& LineBezierQuad) {
+  FRlDrawLineBezierQuad OutLineBezierQuad;
+  if (LineBezierQuad.CommandID < 0) {
+    OutLineBezierQuad.CommandID = -1;
+    OutLineBezierQuad = FRlDrawLineBezierQuad();
+    return OutLineBezierQuad;
   }
 
+  OutLineBezierQuad = LineBezierQuad;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineBezierQuad;
-  UpdateCmd.StartPos = InShape.StartPos;
-  UpdateCmd.EndPos = InShape.EndPos;
-  UpdateCmd.Position = InShape.ControlPos;
-  UpdateCmd.Thick = InShape.Thick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = LineBezierQuad.StartPos;
+  UpdateCmd.EndPos = LineBezierQuad.EndPos;
+  UpdateCmd.Position = LineBezierQuad.ControlPos;
+  UpdateCmd.Thick = LineBezierQuad.Thick;
+  UpdateCmd.Color = LineBezierQuad.Color;
+  OutLineBezierQuad.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineBezierQuad.CommandID : -1; 
+  return OutLineBezierQuad;
 }
 
-void URaylibUEBPLibrary::DrawLineBezierCubic(FIntPoint StartPos, FIntPoint EndPos, FIntPoint StartControlPos, FIntPoint EndControlPos, float Thick, FLinearColor Color, int32& OutHandleID, FRlDrawLineBezierCubic& OutShape) {
+void URaylibUEBPLibrary::DrawLineBezierCubic(FIntPoint StartPos, FIntPoint EndPos, FIntPoint StartControlPos, FIntPoint EndControlPos, float Thick, FLinearColor Color, FRlDrawLineBezierCubic& LineBezierCubic) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineBezierCubic;
   Cmd.StartPos = StartPos;
@@ -278,113 +250,101 @@ void URaylibUEBPLibrary::DrawLineBezierCubic(FIntPoint StartPos, FIntPoint EndPo
   Cmd.Size = EndControlPos;
   Cmd.Thick = Thick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.StartControlPos = StartControlPos;
-  OutShape.EndControlPos = EndControlPos;
-  OutShape.Thick = Thick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineBezierCubic.CommandID = ID;
+  LineBezierCubic.StartPos = StartPos;
+  LineBezierCubic.EndPos = EndPos;
+  LineBezierCubic.StartControlPos = StartControlPos;
+  LineBezierCubic.EndControlPos = EndControlPos;
+  LineBezierCubic.Thick = Thick;
+  LineBezierCubic.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineBezierCubicUpdate(int32 HandleID, const FRlDrawLineBezierCubic& InShape, int32& OutHandleID, FRlDrawLineBezierCubic& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineBezierCubic();
-    return;
+FRlDrawLineBezierCubic URaylibUEBPLibrary::DrawLineBezierCubicUpdate(const FRlDrawLineBezierCubic& LineBezierCubic) {
+  FRlDrawLineBezierCubic OutLineBezierCubic;
+  if (LineBezierCubic.CommandID < 0) {
+    OutLineBezierCubic.CommandID = -1;
+    OutLineBezierCubic = FRlDrawLineBezierCubic();
+    return OutLineBezierCubic;
   }
 
+  OutLineBezierCubic = LineBezierCubic;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineBezierCubic;
-  UpdateCmd.StartPos = InShape.StartPos;
-  UpdateCmd.EndPos = InShape.EndPos;
-  UpdateCmd.Position = InShape.StartControlPos;
-  UpdateCmd.Size = InShape.EndControlPos;
-  UpdateCmd.Thick = InShape.Thick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.StartPos = LineBezierCubic.StartPos;
+  UpdateCmd.EndPos = LineBezierCubic.EndPos;
+  UpdateCmd.Position = LineBezierCubic.StartControlPos;
+  UpdateCmd.Size = LineBezierCubic.EndControlPos;
+  UpdateCmd.Thick = LineBezierCubic.Thick;
+  UpdateCmd.Color = LineBezierCubic.Color;
+  OutLineBezierCubic.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineBezierCubic.CommandID : -1; 
+  return OutLineBezierCubic;
 }
 
-void URaylibUEBPLibrary::DrawLineStrip(const TArray<FIntPoint>& Points, FLinearColor Color, int32& OutHandleID, FRlDrawLineStrip& OutShape) {
+void URaylibUEBPLibrary::DrawLineStrip(const TArray<FIntPoint>& Points, FLinearColor Color, FRlDrawLineStrip& LineStrip) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLineStrip;
   Cmd.Points = Points;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Points = Points;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  LineStrip.CommandID = ID;
+  LineStrip.Points = Points;
+  LineStrip.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLineStripUpdate(int32 HandleID, const FRlDrawLineStrip& InShape, int32& OutHandleID, FRlDrawLineStrip& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLineStrip();
-    return;
+FRlDrawLineStrip URaylibUEBPLibrary::DrawLineStripUpdate(const FRlDrawLineStrip& LineStrip) {
+  FRlDrawLineStrip OutLineStrip;
+  if (LineStrip.CommandID < 0) {
+    OutLineStrip.CommandID = -1;
+    OutLineStrip = FRlDrawLineStrip();
+    return OutLineStrip;
   }
 
+  OutLineStrip = LineStrip;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawLineStrip;
-  UpdateCmd.Points = InShape.Points;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points = LineStrip.Points;
+  UpdateCmd.Color = LineStrip.Color;
+  OutLineStrip.CommandID = rlCmdBuf.Update(UpdateCmd) ? LineStrip.CommandID : -1; 
+  return OutLineStrip;
 }
 
-void URaylibUEBPLibrary::DrawCircle(int32 CenterX, int32 CenterY, float Radius, FLinearColor Color, int32& OutHandleID, FRlDrawCircle& OutShape) {
+void URaylibUEBPLibrary::DrawCircle(int32 CenterX, int32 CenterY, float Radius, FLinearColor Color, FRlDrawCircle& Circle) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircle;
   Cmd.Position = FIntPoint(CenterX, CenterY);
   Cmd.Radius = Radius;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.CenterX = CenterX;
-  OutShape.CenterY = CenterY;
-  OutShape.Radius = Radius;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Circle.CommandID = ID;
+  Circle.CenterX = CenterX;
+  Circle.CenterY = CenterY;
+  Circle.Radius = Radius;
+  Circle.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircleUpdate(int32 HandleID, const FRlDrawCircle& InShape, int32& OutHandleID, FRlDrawCircle& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircle();
-    return;
+FRlDrawCircle URaylibUEBPLibrary::DrawCircleUpdate(const FRlDrawCircle& Circle) {
+  FRlDrawCircle OutCircle;
+  if (Circle.CommandID < 0) {
+    OutCircle.CommandID = -1;
+    OutCircle = FRlDrawCircle();
+    return OutCircle;
   }
 
+  OutCircle = Circle;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCircle;
-  UpdateCmd.Position = FIntPoint(InShape.CenterX, InShape.CenterY);
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(Circle.CenterX, Circle.CenterY);
+  UpdateCmd.Radius = Circle.Radius;
+  UpdateCmd.Color = Circle.Color;
+  OutCircle.CommandID = rlCmdBuf.Update(UpdateCmd) ? Circle.CommandID : -1; 
+  return OutCircle;
 }
 
-void URaylibUEBPLibrary::DrawCircleSector(FIntPoint Center, float Radius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, int32& OutHandleID, FRlDrawCircleSector& OutShape) {
+void URaylibUEBPLibrary::DrawCircleSector(FIntPoint Center, float Radius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, FRlDrawCircleSector& CircleSector) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircleSector;
   Cmd.Position = Center;
@@ -393,43 +353,39 @@ void URaylibUEBPLibrary::DrawCircleSector(FIntPoint Center, float Radius, float 
   Cmd.EndAngle = EndAngle;
   Cmd.Segments = Segments;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.StartAngle = StartAngle;
-  OutShape.EndAngle = EndAngle;
-  OutShape.Segments = Segments;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CircleSector.CommandID = ID;
+  CircleSector.Center = Center;
+  CircleSector.Radius = Radius;
+  CircleSector.StartAngle = StartAngle;
+  CircleSector.EndAngle = EndAngle;
+  CircleSector.Segments = Segments;
+  CircleSector.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircleSectorUpdate(int32 HandleID, const FRlDrawCircleSector& InShape, int32& OutHandleID, FRlDrawCircleSector& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircleSector();
-    return;
+FRlDrawCircleSector URaylibUEBPLibrary::DrawCircleSectorUpdate(const FRlDrawCircleSector& CircleSector) {
+  FRlDrawCircleSector OutCircleSector;
+  if (CircleSector.CommandID < 0) {
+    OutCircleSector.CommandID = -1;
+    OutCircleSector = FRlDrawCircleSector();
+    return OutCircleSector;
   }
 
+  OutCircleSector = CircleSector;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCircleSector;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.StartAngle = InShape.StartAngle;
-  UpdateCmd.EndAngle = InShape.EndAngle;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = CircleSector.Center;
+  UpdateCmd.Radius = CircleSector.Radius;
+  UpdateCmd.StartAngle = CircleSector.StartAngle;
+  UpdateCmd.EndAngle = CircleSector.EndAngle;
+  UpdateCmd.Segments = CircleSector.Segments;
+  UpdateCmd.Color = CircleSector.Color;
+  OutCircleSector.CommandID = rlCmdBuf.Update(UpdateCmd) ? CircleSector.CommandID : -1; 
+  return OutCircleSector;
 }
 
-void URaylibUEBPLibrary::DrawCircleSectorLines(FIntPoint Center, float Radius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, int32& OutHandleID, FRlDrawCircleSectorLines& OutShape) {
+void URaylibUEBPLibrary::DrawCircleSectorLines(FIntPoint Center, float Radius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, FRlDrawCircleSectorLines& CircleSectorLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircleSectorLines;
   Cmd.Position = Center;
@@ -438,235 +394,209 @@ void URaylibUEBPLibrary::DrawCircleSectorLines(FIntPoint Center, float Radius, f
   Cmd.EndAngle = EndAngle;
   Cmd.Segments = Segments;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.StartAngle = StartAngle;
-  OutShape.EndAngle = EndAngle;
-  OutShape.Segments = Segments;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CircleSectorLines.CommandID = ID;
+  CircleSectorLines.Center = Center;
+  CircleSectorLines.Radius = Radius;
+  CircleSectorLines.StartAngle = StartAngle;
+  CircleSectorLines.EndAngle = EndAngle;
+  CircleSectorLines.Segments = Segments;
+  CircleSectorLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircleSectorLinesUpdate(int32 HandleID, const FRlDrawCircleSectorLines& InShape, int32& OutHandleID, FRlDrawCircleSectorLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircleSectorLines();
-    return;
+FRlDrawCircleSectorLines URaylibUEBPLibrary::DrawCircleSectorLinesUpdate(const FRlDrawCircleSectorLines& CircleSectorLines) {
+  FRlDrawCircleSectorLines OutCircleSectorLines;
+  if (CircleSectorLines.CommandID < 0) {
+    OutCircleSectorLines.CommandID = -1;
+    OutCircleSectorLines = FRlDrawCircleSectorLines();
+    return OutCircleSectorLines;
   }
 
+  OutCircleSectorLines = CircleSectorLines;
   FRlDrawCommand UpdateCmd;
-  UpdateCmd.Type = ERlDrawType::DrawCircleSector;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.StartAngle = InShape.StartAngle;
-  UpdateCmd.EndAngle = InShape.EndAngle;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Type = ERlDrawType::DrawCircleSectorLines;
+  UpdateCmd.Position = CircleSectorLines.Center;
+  UpdateCmd.Radius = CircleSectorLines.Radius;
+  UpdateCmd.StartAngle = CircleSectorLines.StartAngle;
+  UpdateCmd.EndAngle = CircleSectorLines.EndAngle;
+  UpdateCmd.Segments = CircleSectorLines.Segments;
+  UpdateCmd.Color = CircleSectorLines.Color;
+  OutCircleSectorLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? CircleSectorLines.CommandID : -1; 
+  return OutCircleSectorLines;
 }
 
-void URaylibUEBPLibrary::DrawCircleGradient(FIntPoint Center, float Radius, FLinearColor Color1, FLinearColor Color2, int32& OutHandleID, FRlDrawCircleGradient& OutShape) {
+void URaylibUEBPLibrary::DrawCircleGradient(FIntPoint Center, float Radius, FLinearColor Color1, FLinearColor Color2, FRlDrawCircleGradient& CircleGradient) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircleGradient;
   Cmd.Position = Center;
   Cmd.Radius = Radius;
   Cmd.Color1 = Color1;
   Cmd.Color2 = Color2;
-  if (Cmd.Color1.A == 0.f) Cmd.Color1.A = 1.f;
-  if (Cmd.Color2.A == 0.f) Cmd.Color2.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Color1 = Color1;
-  OutShape.Color2 = Color2;
-  OutShape.CommandID = ID;
+
+  CircleGradient.CommandID = ID;
+  CircleGradient.Center = Center;
+  CircleGradient.Radius = Radius;
+  CircleGradient.Color1 = Color1;
+  CircleGradient.Color2 = Color2;
 }
 
-void URaylibUEBPLibrary::DrawCircleGradientUpdate(int32 HandleID, const FRlDrawCircleGradient& InShape, int32& OutHandleID, FRlDrawCircleGradient& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircleGradient();
-    return;
+FRlDrawCircleGradient URaylibUEBPLibrary::DrawCircleGradientUpdate(const FRlDrawCircleGradient& CircleGradient) {
+  FRlDrawCircleGradient OutCircleGradient;
+  if (CircleGradient.CommandID < 0) {
+    OutCircleGradient.CommandID = -1;
+    OutCircleGradient = FRlDrawCircleGradient();
+    return OutCircleGradient;
   }
 
+  OutCircleGradient = CircleGradient;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCircleGradient;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Color1 = InShape.Color1;
-  UpdateCmd.Color2 = InShape.Color2;
-  if (UpdateCmd.Color1.A == 0.f) UpdateCmd.Color1.A = 1.f;
-  if (UpdateCmd.Color2.A == 0.f) UpdateCmd.Color2.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = CircleGradient.Center;
+  UpdateCmd.Radius = CircleGradient.Radius;
+  UpdateCmd.Color1 = CircleGradient.Color1;
+  UpdateCmd.Color2 = CircleGradient.Color2;
+  OutCircleGradient.CommandID = rlCmdBuf.Update(UpdateCmd) ? CircleGradient.CommandID : -1; 
+  return OutCircleGradient;
 }
 
-void URaylibUEBPLibrary::DrawCircleV(FIntPoint Center, float Radius, FLinearColor Color, int32& OutHandleID, FRlDrawCircleV& OutShape) {
+void URaylibUEBPLibrary::DrawCircleV(FIntPoint Center, float Radius, FLinearColor Color, FRlDrawCircleV& CircleV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircleV;
   Cmd.Position = Center;
   Cmd.Radius = Radius;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CircleV.CommandID = ID;
+  CircleV.Center = Center;
+  CircleV.Radius = Radius;
+  CircleV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircleVUpdate(int32 HandleID, const FRlDrawCircleV& InShape, int32& OutHandleID, FRlDrawCircleV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircleV();
-    return;
+FRlDrawCircleV URaylibUEBPLibrary::DrawCircleVUpdate(const FRlDrawCircleV& CircleV) {
+  FRlDrawCircleV OutCircleV;
+  if (CircleV.CommandID < 0) {
+    OutCircleV.CommandID = -1;
+    OutCircleV = FRlDrawCircleV();
+    return OutCircleV;
   }
 
+  OutCircleV = CircleV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCircleV;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = CircleV.Center;
+  UpdateCmd.Radius = CircleV.Radius;
+  UpdateCmd.Color = CircleV.Color;
+  OutCircleV.CommandID = rlCmdBuf.Update(UpdateCmd) ? CircleV.CommandID : -1; 
+  return OutCircleV;
 }
 
-void URaylibUEBPLibrary::DrawCircleLines(FIntPoint Center, float Radius, FLinearColor Color, int32& OutHandleID, FRlDrawCircleLines& OutShape) {
+void URaylibUEBPLibrary::DrawCircleLines(FIntPoint Center, float Radius, FLinearColor Color, FRlDrawCircleLines& CircleLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircleLines;
   Cmd.Position = Center;
   Cmd.Radius = Radius;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CircleLines.CommandID = ID;
+  CircleLines.Center = Center;
+  CircleLines.Radius = Radius;
+  CircleLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircleLinesUpdate(int32 HandleID, const FRlDrawCircleLines& InShape, int32& OutHandleID, FRlDrawCircleLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircleLines();
-    return;
+FRlDrawCircleLines URaylibUEBPLibrary::DrawCircleLinesUpdate(const FRlDrawCircleLines& CircleLines) {
+  FRlDrawCircleLines OutCircleLines;
+  if (CircleLines.CommandID < 0) {
+    OutCircleLines.CommandID = -1;
+    OutCircleLines = FRlDrawCircleLines();
+    return OutCircleLines;
   }
 
+  OutCircleLines = CircleLines;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCircleLines;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = CircleLines.Center;
+  UpdateCmd.Radius = CircleLines.Radius;
+  UpdateCmd.Color = CircleLines.Color;
+  OutCircleLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? CircleLines.CommandID : -1; 
+  return OutCircleLines;
 }
 
-void URaylibUEBPLibrary::DrawEllipse(int32 CenterX, int32 CenterY, float RadiusH, float RadiusV, FLinearColor Color, int32& OutHandleID, FRlDrawEllipse& OutShape) {
+void URaylibUEBPLibrary::DrawEllipse(int32 CenterX, int32 CenterY, float RadiusH, float RadiusV, FLinearColor Color, FRlDrawEllipse& Ellipse) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawEllipse;
   Cmd.Position = FIntPoint(CenterX, CenterY);
   Cmd.Radius = RadiusH;
   Cmd.Size.X = (int32)RadiusV;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.CenterX = CenterX;
-  OutShape.CenterY = CenterY;
-  OutShape.RadiusH = RadiusH;
-  OutShape.RadiusV = RadiusV;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Ellipse.CommandID = ID;
+  Ellipse.CenterX = CenterX;
+  Ellipse.CenterY = CenterY;
+  Ellipse.RadiusH = RadiusH;
+  Ellipse.RadiusV = RadiusV;
+  Ellipse.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawEllipseUpdate(int32 HandleID, const FRlDrawEllipse& InShape, int32& OutHandleID, FRlDrawEllipse& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawEllipse();
-    return;
+FRlDrawEllipse URaylibUEBPLibrary::DrawEllipseUpdate(const FRlDrawEllipse& Ellipse) {
+  FRlDrawEllipse OutEllipse;
+  if (Ellipse.CommandID < 0) {
+    OutEllipse.CommandID = -1;
+    OutEllipse = FRlDrawEllipse();
+    return OutEllipse;
   }
 
+  OutEllipse = Ellipse;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawEllipse;
-  UpdateCmd.Position = FIntPoint(InShape.CenterX, InShape.CenterY);
-  UpdateCmd.Radius = InShape.RadiusH;
-  UpdateCmd.Size.X = (int32)InShape.RadiusV;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(Ellipse.CenterX, Ellipse.CenterY);
+  UpdateCmd.Radius = Ellipse.RadiusH;
+  UpdateCmd.Size.X = (int32)Ellipse.RadiusV;
+  UpdateCmd.Color = Ellipse.Color;
+  OutEllipse.CommandID = rlCmdBuf.Update(UpdateCmd) ? Ellipse.CommandID : -1; 
+  return OutEllipse;
 }
 
-void URaylibUEBPLibrary::DrawEllipseLines(FIntPoint Center, float RadiusH, float RadiusV, FLinearColor Color, int32& OutHandleID, FRlDrawEllipseLines& OutShape) {
+void URaylibUEBPLibrary::DrawEllipseLines(FIntPoint Center, float RadiusH, float RadiusV, FLinearColor Color, FRlDrawEllipseLines& EllipseLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawEllipseLines;
   Cmd.Position = Center;
   Cmd.Radius = RadiusH;
   Cmd.Size.X = (int32)RadiusV;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.RadiusH = RadiusH;
-  OutShape.RadiusV = RadiusV;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  EllipseLines.CommandID = ID;
+  EllipseLines.Center = Center;
+  EllipseLines.RadiusH = RadiusH;
+  EllipseLines.RadiusV = RadiusV;
+  EllipseLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawEllipseLinesUpdate(int32 HandleID, const FRlDrawEllipseLines& InShape, int32& OutHandleID, FRlDrawEllipseLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawEllipseLines();
-    return;
+FRlDrawEllipseLines URaylibUEBPLibrary::DrawEllipseLinesUpdate(const FRlDrawEllipseLines& EllipseLines) {
+  FRlDrawEllipseLines OutEllipseLines;
+  if (EllipseLines.CommandID < 0) {
+    OutEllipseLines.CommandID = -1;
+    OutEllipseLines = FRlDrawEllipseLines();
+    return OutEllipseLines;
   }
 
+  OutEllipseLines = EllipseLines;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawEllipseLines;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.RadiusH;
-  UpdateCmd.Size.X = (int32)InShape.RadiusV;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = EllipseLines.Center;
+  UpdateCmd.Radius = EllipseLines.RadiusH;
+  UpdateCmd.Size.X = (int32)EllipseLines.RadiusV;
+  UpdateCmd.Color = EllipseLines.Color;
+  OutEllipseLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? EllipseLines.CommandID : -1; 
+  return OutEllipseLines;
 }
 
-void URaylibUEBPLibrary::DrawRing(FIntPoint Center, float InnerRadius, float OuterRadius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, int32& OutHandleID, FRlDrawRing& OutShape) {
+void URaylibUEBPLibrary::DrawRing(FIntPoint Center, float InnerRadius, float OuterRadius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, FRlDrawRing& Ring) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRing;
   Cmd.Position = Center;
@@ -676,45 +606,41 @@ void URaylibUEBPLibrary::DrawRing(FIntPoint Center, float InnerRadius, float Out
   Cmd.EndAngle = EndAngle;
   Cmd.Segments = Segments;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.InnerRadius = InnerRadius;
-  OutShape.OuterRadius = OuterRadius;
-  OutShape.StartAngle = StartAngle;
-  OutShape.EndAngle = EndAngle;
-  OutShape.Segments = Segments;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Ring.CommandID = ID;
+  Ring.Center = Center;
+  Ring.InnerRadius = InnerRadius;
+  Ring.OuterRadius = OuterRadius;
+  Ring.StartAngle = StartAngle;
+  Ring.EndAngle = EndAngle;
+  Ring.Segments = Segments;
+  Ring.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRingUpdate(int32 HandleID, const FRlDrawRing& InShape, int32& OutHandleID, FRlDrawRing& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRing();
-    return;
+FRlDrawRing URaylibUEBPLibrary::DrawRingUpdate(const FRlDrawRing& Ring) {
+  FRlDrawRing OutRing;
+  if (Ring.CommandID < 0) {
+    OutRing.CommandID = -1;
+    OutRing = FRlDrawRing();
+    return OutRing;
   }
 
+  OutRing = Ring;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRing;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.OuterRadius;
-  UpdateCmd.Size.X = (int32)InShape.InnerRadius;
-  UpdateCmd.StartAngle = InShape.StartAngle;
-  UpdateCmd.EndAngle = InShape.EndAngle;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = Ring.Center;
+  UpdateCmd.Radius = Ring.OuterRadius;
+  UpdateCmd.Size.X = (int32)Ring.InnerRadius;
+  UpdateCmd.StartAngle = Ring.StartAngle;
+  UpdateCmd.EndAngle = Ring.EndAngle;
+  UpdateCmd.Segments = Ring.Segments;
+  UpdateCmd.Color = Ring.Color;
+  OutRing.CommandID = rlCmdBuf.Update(UpdateCmd) ? Ring.CommandID : -1; 
+  return OutRing;
 }
 
-void URaylibUEBPLibrary::DrawRingLines(FIntPoint Center, float InnerRadius, float OuterRadius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, int32& OutHandleID, FRlDrawRingLines& OutShape) {
+void URaylibUEBPLibrary::DrawRingLines(FIntPoint Center, float InnerRadius, float OuterRadius, float StartAngle, float EndAngle, int32 Segments, FLinearColor Color, FRlDrawRingLines& RingLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRingLines;
   Cmd.Position = Center;
@@ -724,45 +650,41 @@ void URaylibUEBPLibrary::DrawRingLines(FIntPoint Center, float InnerRadius, floa
   Cmd.EndAngle = EndAngle;
   Cmd.Segments = Segments;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.InnerRadius = InnerRadius;
-  OutShape.OuterRadius = OuterRadius;
-  OutShape.StartAngle = StartAngle;
-  OutShape.EndAngle = EndAngle;
-  OutShape.Segments = Segments;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RingLines.CommandID = ID;
+  RingLines.Center = Center;
+  RingLines.InnerRadius = InnerRadius;
+  RingLines.OuterRadius = OuterRadius;
+  RingLines.StartAngle = StartAngle;
+  RingLines.EndAngle = EndAngle;
+  RingLines.Segments = Segments;
+  RingLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRingLinesUpdate(int32 HandleID, const FRlDrawRingLines& InShape, int32& OutHandleID, FRlDrawRingLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRingLines();
-    return;
+FRlDrawRingLines URaylibUEBPLibrary::DrawRingLinesUpdate(const FRlDrawRingLines& RingLines) {
+  FRlDrawRingLines OutRingLines;
+  if (RingLines.CommandID < 0) {
+    OutRingLines.CommandID = -1;
+    OutRingLines = FRlDrawRingLines();
+    return OutRingLines;
   }
 
+  OutRingLines = RingLines;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRingLines;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Radius = InShape.OuterRadius;
-  UpdateCmd.Size.X = (int32)InShape.InnerRadius;
-  UpdateCmd.StartAngle = InShape.StartAngle;
-  UpdateCmd.EndAngle = InShape.EndAngle;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RingLines.Center;
+  UpdateCmd.Radius = RingLines.OuterRadius;
+  UpdateCmd.Size.X = (int32)RingLines.InnerRadius;
+  UpdateCmd.StartAngle = RingLines.StartAngle;
+  UpdateCmd.EndAngle = RingLines.EndAngle;
+  UpdateCmd.Segments = RingLines.Segments;
+  UpdateCmd.Color = RingLines.Color;
+  OutRingLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? RingLines.CommandID : -1; 
+  return OutRingLines;
 }
 
-void URaylibUEBPLibrary::DrawRectangle(int32 PosX, int32 PosY, int32 Width, int32 Height, FLinearColor Color, int32& OutHandleID, FRlDrawRectangle& OutShape) {
+void URaylibUEBPLibrary::DrawRectangle(int32 PosX, int32 PosY, int32 Width, int32 Height, FLinearColor Color, FRlDrawRectangle& Rectangle) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangle;
   Cmd.Position = FIntPoint(PosX, PosY);
@@ -770,105 +692,94 @@ void URaylibUEBPLibrary::DrawRectangle(int32 PosX, int32 PosY, int32 Width, int3
   Cmd.Color = Color;
   if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.Width = Width;
-  OutShape.Height = Height;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+  Rectangle.CommandID = ID;
+  Rectangle.PosX = PosX;
+  Rectangle.PosY = PosY;
+  Rectangle.Width = Width;
+  Rectangle.Height = Height;
+  Rectangle.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleUpdate(int32 HandleID, const FRlDrawRectangle& InShape, int32& OutHandleID, FRlDrawRectangle& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangle();
-    return;
-  }
-
+FRlDrawRectangle URaylibUEBPLibrary::DrawRectangleUpdate(const FRlDrawRectangle& Rectangle) {
+  FRlDrawRectangle OutRectangle;
+  if (Rectangle.CommandID < 0) {
+    OutRectangle.CommandID = -1;
+    OutRectangle = FRlDrawRectangle();
+    return OutRectangle;
+  }  OutRectangle = Rectangle;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Rectangle.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangle;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.Size = FIntPoint(InShape.Width, InShape.Height);
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(Rectangle.PosX, Rectangle.PosY);
+  UpdateCmd.Size = FIntPoint(Rectangle.Width, Rectangle.Height);
+  UpdateCmd.Color = Rectangle.Color;
+  OutRectangle.CommandID = rlCmdBuf.Update(UpdateCmd) ? OutRectangle.CommandID : -1; 
+  return OutRectangle;
 }
 
-void URaylibUEBPLibrary::DrawRectangleV(FIntPoint Position, FIntPoint Size, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleV& OutShape) {
+
+
+void URaylibUEBPLibrary::DrawRectangleV(FIntPoint Position, FIntPoint Size, FLinearColor Color, FRlDrawRectangleV& RectangleV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleV;
   Cmd.Position = Position;
   Cmd.Size = Size;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectangleV.CommandID = ID;
+  RectangleV.Position = Position;
+  RectangleV.Size = Size;
+  RectangleV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleVUpdate(int32 HandleID, const FRlDrawRectangleV& InShape, int32& OutHandleID, FRlDrawRectangleV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleV();
-    return;
+FRlDrawRectangleV URaylibUEBPLibrary::DrawRectangleVUpdate(const FRlDrawRectangleV& RectangleV) {
+  FRlDrawRectangleV OutRectangleV;
+  if (RectangleV.CommandID < 0) {
+    OutRectangleV.CommandID = -1;
+    OutRectangleV = FRlDrawRectangleV();
+    return OutRectangleV;
   }
 
+  OutRectangleV = RectangleV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRectangleV;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleV.Position;
+  UpdateCmd.Size = RectangleV.Size;
+  UpdateCmd.Color = RectangleV.Color;
+  OutRectangleV.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleV.CommandID : -1; 
+  return OutRectangleV;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRec(FIntPoint Position, FIntPoint Size, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleRec& OutShape) {
-  int32 TempHandleID;
+void URaylibUEBPLibrary::DrawRectangleRec(FIntPoint Position, FIntPoint Size, FLinearColor Color, FRlDrawRectangleRec& RectangleRec) {
   FRlDrawRectangleV TempShape;
-  DrawRectangleV(Position, Size, Color, TempHandleID, TempShape);
-  OutHandleID = TempHandleID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color = Color;
-  OutShape.CommandID = TempHandleID;
+  DrawRectangleV(Position, Size, Color, TempShape);
+  RectangleRec.CommandID = TempShape.CommandID;
+  RectangleRec.Position = Position;
+  RectangleRec.Size = Size;
+  RectangleRec.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRecUpdate(int32 HandleID, const FRlDrawRectangleRec& InShape, int32& OutHandleID, FRlDrawRectangleRec& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleRec();
-    return;
+FRlDrawRectangleRec URaylibUEBPLibrary::DrawRectangleRecUpdate(const FRlDrawRectangleRec& RectangleRec) {
+  FRlDrawRectangleRec OutRectangleRec;
+  if (RectangleRec.CommandID < 0) {
+    OutRectangleRec.CommandID = -1;
+    OutRectangleRec = FRlDrawRectangleRec();
+    return OutRectangleRec;
   }
 
+  OutRectangleRec = RectangleRec;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectangleRec.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangleRec;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleRec.Position;
+  UpdateCmd.Size = RectangleRec.Size;
+  UpdateCmd.Color = RectangleRec.Color;
+  OutRectangleRec.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleRec.CommandID : -1; 
+  return OutRectangleRec;
 }
 
-void URaylibUEBPLibrary::DrawRectanglePro(FIntPoint Position, FIntPoint Size, FIntPoint Origin, float Rotation, FLinearColor Color, int32& OutHandleID, FRlDrawRectanglePro& OutShape) {
+void URaylibUEBPLibrary::DrawRectanglePro(FIntPoint Position, FIntPoint Size, FIntPoint Origin, float Rotation, FLinearColor Color, FRlDrawRectanglePro& RectanglePro) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectanglePro;
   Cmd.Position = Position;
@@ -876,246 +787,217 @@ void URaylibUEBPLibrary::DrawRectanglePro(FIntPoint Position, FIntPoint Size, FI
   Cmd.StartPos = Origin;
   Cmd.Rotation = Rotation;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Origin = Origin;
-  OutShape.Rotation = Rotation;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectanglePro.CommandID = ID;
+  RectanglePro.Position = Position;
+  RectanglePro.Size = Size;
+  RectanglePro.Origin = Origin;
+  RectanglePro.Rotation = Rotation;
+  RectanglePro.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleProUpdate(int32 HandleID, const FRlDrawRectanglePro& InShape, int32& OutHandleID, FRlDrawRectanglePro& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectanglePro();
-    return;
+FRlDrawRectanglePro URaylibUEBPLibrary::DrawRectangleProUpdate(const FRlDrawRectanglePro& RectanglePro) {
+  FRlDrawRectanglePro OutRectanglePro;
+  if (RectanglePro.CommandID < 0) {
+    OutRectanglePro.CommandID = -1;
+    OutRectanglePro = FRlDrawRectanglePro();
+    return OutRectanglePro;
   }
 
+  OutRectanglePro = RectanglePro;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectanglePro.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectanglePro;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.StartPos = InShape.Origin;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectanglePro.Position;
+  UpdateCmd.Size = RectanglePro.Size;
+  UpdateCmd.StartPos = RectanglePro.Origin;
+  UpdateCmd.Rotation = RectanglePro.Rotation;
+  UpdateCmd.Color = RectanglePro.Color;
+  OutRectanglePro.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectanglePro.CommandID : -1; 
+  return OutRectanglePro;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientV(FIntPoint Position, FIntPoint Size, FLinearColor Color1, FLinearColor Color2, int32& OutHandleID, FRlDrawRectangleGradientV& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleGradientV(FIntPoint Position, FIntPoint Size, FLinearColor Color1, FLinearColor Color2, FRlDrawRectangleGradientV& RectangleGradientV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleGradientV;
   Cmd.Position = Position;
   Cmd.Size = Size;
   Cmd.Color1 = Color1;
   Cmd.Color2 = Color2;
-  if (Cmd.Color1.A == 0.f) Cmd.Color1.A = 1.f;
-  if (Cmd.Color2.A == 0.f) Cmd.Color2.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color1 = Color1;
-  OutShape.Color2 = Color2;
-  OutShape.CommandID = ID;
+
+  RectangleGradientV.CommandID = ID;
+  RectangleGradientV.Position = Position;
+  RectangleGradientV.Size = Size;
+  RectangleGradientV.Color1 = Color1;
+  RectangleGradientV.Color2 = Color2;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientVUpdate(int32 HandleID, const FRlDrawRectangleGradientV& InShape, int32& OutHandleID, FRlDrawRectangleGradientV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleGradientV();
-    return;
+FRlDrawRectangleGradientV URaylibUEBPLibrary::DrawRectangleGradientVUpdate(const FRlDrawRectangleGradientV& RectangleGradientV) {
+  FRlDrawRectangleGradientV OutRectangleGradientV;
+  if (RectangleGradientV.CommandID < 0) {
+    OutRectangleGradientV.CommandID = -1;
+    OutRectangleGradientV = FRlDrawRectangleGradientV();
+    return OutRectangleGradientV;
   }
 
+  OutRectangleGradientV = RectangleGradientV;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectangleGradientV.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangleGradientV;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Color1 = InShape.Color1;
-  UpdateCmd.Color2 = InShape.Color2;
-  if (UpdateCmd.Color1.A == 0.f) UpdateCmd.Color1.A = 1.f;
-  if (UpdateCmd.Color2.A == 0.f) UpdateCmd.Color2.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleGradientV.Position;
+  UpdateCmd.Size = RectangleGradientV.Size;
+  UpdateCmd.Color1 = RectangleGradientV.Color1;
+  UpdateCmd.Color2 = RectangleGradientV.Color2;
+  OutRectangleGradientV.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleGradientV.CommandID : -1; 
+  return OutRectangleGradientV;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientH(FIntPoint Position, FIntPoint Size, FLinearColor Color1, FLinearColor Color2, int32& OutHandleID, FRlDrawRectangleGradientH& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleGradientH(FIntPoint Position, FIntPoint Size, FLinearColor Color1, FLinearColor Color2, FRlDrawRectangleGradientH& RectangleGradientH) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleGradientH;
   Cmd.Position = Position;
   Cmd.Size = Size;
   Cmd.Color1 = Color1;
   Cmd.Color2 = Color2;
-  if (Cmd.Color1.A == 0.f) Cmd.Color1.A = 1.f;
-  if (Cmd.Color2.A == 0.f) Cmd.Color2.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color1 = Color1;
-  OutShape.Color2 = Color2;
-  OutShape.CommandID = ID;
+
+  RectangleGradientH.CommandID = ID;
+  RectangleGradientH.Position = Position;
+  RectangleGradientH.Size = Size;
+  RectangleGradientH.Color1 = Color1;
+  RectangleGradientH.Color2 = Color2;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientHUpdate(int32 HandleID, const FRlDrawRectangleGradientH& InShape, int32& OutHandleID, FRlDrawRectangleGradientH& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleGradientH();
-    return;
+FRlDrawRectangleGradientH URaylibUEBPLibrary::DrawRectangleGradientHUpdate(const FRlDrawRectangleGradientH& RectangleGradientH) {
+  FRlDrawRectangleGradientH OutRectangleGradientH;
+  if (RectangleGradientH.CommandID < 0) {
+    OutRectangleGradientH.CommandID = -1;
+    OutRectangleGradientH = FRlDrawRectangleGradientH();
+    return OutRectangleGradientH;
   }
 
+  OutRectangleGradientH = RectangleGradientH;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectangleGradientH.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangleGradientH;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Color1 = InShape.Color1;
-  UpdateCmd.Color2 = InShape.Color2;
-  if (UpdateCmd.Color1.A == 0.f) UpdateCmd.Color1.A = 1.f;
-  if (UpdateCmd.Color2.A == 0.f) UpdateCmd.Color2.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleGradientH.Position;
+  UpdateCmd.Size = RectangleGradientH.Size;
+  UpdateCmd.Color1 = RectangleGradientH.Color1;
+  UpdateCmd.Color2 = RectangleGradientH.Color2;
+  OutRectangleGradientH.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleGradientH.CommandID : -1; 
+  return OutRectangleGradientH;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientEx(FIntPoint TopLeft, FIntPoint TopRight, FIntPoint BottomRight, FIntPoint BottomLeft, int32& OutHandleID, FRlDrawRectangleGradientEx& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleGradientEx(FIntPoint TopLeft, FIntPoint TopRight, FIntPoint BottomRight, FIntPoint BottomLeft, FRlDrawRectangleGradientEx& RectangleGradientEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleGradientEx;
   Cmd.Position = TopLeft;
   Cmd.StartPos = TopRight;
   Cmd.EndPos = BottomRight;
   Cmd.Size = BottomLeft;
-  if (Cmd.Color1.A == 0.f) Cmd.Color1.A = 1.f;
-  if (Cmd.Color2.A == 0.f) Cmd.Color2.A = 1.f;
-  if (Cmd.Color3.A == 0.f) Cmd.Color3.A = 1.f;
-  if (Cmd.Color4.A == 0.f) Cmd.Color4.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TopLeft = TopLeft;
-  OutShape.TopRight = TopRight;
-  OutShape.BottomRight = BottomRight;
-  OutShape.BottomLeft = BottomLeft;
-  OutShape.CommandID = ID;
+
+  RectangleGradientEx.CommandID = ID;
+  RectangleGradientEx.TopLeft = TopLeft;
+  RectangleGradientEx.TopRight = TopRight;
+  RectangleGradientEx.BottomRight = BottomRight;
+  RectangleGradientEx.BottomLeft = BottomLeft;
 }
 
-void URaylibUEBPLibrary::DrawRectangleGradientExUpdate(int32 HandleID, const FRlDrawRectangleGradientEx& InShape, int32& OutHandleID, FRlDrawRectangleGradientEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleGradientEx();
-    return;
+FRlDrawRectangleGradientEx URaylibUEBPLibrary::DrawRectangleGradientExUpdate(const FRlDrawRectangleGradientEx& RectangleGradientEx) {
+  FRlDrawRectangleGradientEx OutRectangleGradientEx;
+  if (RectangleGradientEx.CommandID < 0) {
+    OutRectangleGradientEx.CommandID = -1;
+    OutRectangleGradientEx = FRlDrawRectangleGradientEx();
+    return OutRectangleGradientEx;
   }
 
+  OutRectangleGradientEx = RectangleGradientEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectangleGradientEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangleGradientEx;
-  UpdateCmd.Position = InShape.TopLeft;
-  UpdateCmd.StartPos = InShape.TopRight;
-  UpdateCmd.EndPos = InShape.BottomRight;
-  UpdateCmd.Size = InShape.BottomLeft;
-  if (UpdateCmd.Color1.A == 0.f) UpdateCmd.Color1.A = 1.f;
-  if (UpdateCmd.Color2.A == 0.f) UpdateCmd.Color2.A = 1.f;
-  if (UpdateCmd.Color3.A == 0.f) UpdateCmd.Color3.A = 1.f;
-  if (UpdateCmd.Color4.A == 0.f) UpdateCmd.Color4.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.CommandID = RectangleGradientEx.CommandID;
+  UpdateCmd.Position = RectangleGradientEx.TopLeft;
+  UpdateCmd.StartPos = RectangleGradientEx.TopRight;
+  UpdateCmd.EndPos = RectangleGradientEx.BottomRight;
+  UpdateCmd.Size = RectangleGradientEx.BottomLeft;
+  OutRectangleGradientEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleGradientEx.CommandID : -1; 
+  return OutRectangleGradientEx;
 }
 
-void URaylibUEBPLibrary::DrawRectangleLines(FIntPoint Position, FIntPoint Size, int32 LineThick, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleLines& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleLines(FIntPoint Position, FIntPoint Size, int32 LineThick, FLinearColor Color, FRlDrawRectangleLines& RectangleLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleLines;
   Cmd.Position = Position;
   Cmd.Size = Size;
   Cmd.Thick = LineThick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.LineThick = LineThick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectangleLines.CommandID = ID;
+  RectangleLines.Position = Position;
+  RectangleLines.Size = Size;
+  RectangleLines.LineThick = LineThick;
+  RectangleLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleLinesUpdate(int32 HandleID, const FRlDrawRectangleLines& InShape, int32& OutHandleID, FRlDrawRectangleLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleLines();
-    return;
+FRlDrawRectangleLines URaylibUEBPLibrary::DrawRectangleLinesUpdate(const FRlDrawRectangleLines& RectangleLines) {
+  FRlDrawRectangleLines OutRectangleLines;
+  if (RectangleLines.CommandID < 0) {
+    OutRectangleLines.CommandID = -1;
+    OutRectangleLines = FRlDrawRectangleLines();
+    return OutRectangleLines;
   }
 
+  OutRectangleLines = RectangleLines;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRectangleLines;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Thick = InShape.LineThick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleLines.Position;
+  UpdateCmd.Size = RectangleLines.Size;
+  UpdateCmd.Thick = RectangleLines.LineThick;
+  UpdateCmd.Color = RectangleLines.Color;
+  OutRectangleLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleLines.CommandID : -1; 
+  return OutRectangleLines;
 }
 
-void URaylibUEBPLibrary::DrawRectangleLinesEx(FIntPoint Position, FIntPoint Size, float LineThick, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleLinesEx& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleLinesEx(FIntPoint Position, FIntPoint Size, float LineThick, FLinearColor Color, FRlDrawRectangleLinesEx& RectangleLinesEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleLinesEx;
   Cmd.Position = Position;
   Cmd.Size = Size;
   Cmd.Thick = LineThick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.LineThick = LineThick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectangleLinesEx.CommandID = ID;
+  RectangleLinesEx.Position = Position;
+  RectangleLinesEx.Size = Size;
+  RectangleLinesEx.LineThick = LineThick;
+  RectangleLinesEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleLinesExUpdate(int32 HandleID, const FRlDrawRectangleLinesEx& InShape, int32& OutHandleID, FRlDrawRectangleLinesEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleLinesEx();
-    return;
+FRlDrawRectangleLinesEx URaylibUEBPLibrary::DrawRectangleLinesExUpdate(const FRlDrawRectangleLinesEx& RectangleLinesEx) {
+  FRlDrawRectangleLinesEx OutRectangleLinesEx;
+  if (RectangleLinesEx.CommandID < 0) {
+    OutRectangleLinesEx.CommandID = -1;
+    OutRectangleLinesEx = FRlDrawRectangleLinesEx();
+    return OutRectangleLinesEx;
   }
 
+  OutRectangleLinesEx = RectangleLinesEx;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRectangleLinesEx;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Thick = InShape.LineThick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleLinesEx.Position;
+  UpdateCmd.Size = RectangleLinesEx.Size;
+  UpdateCmd.Thick = RectangleLinesEx.LineThick;
+  UpdateCmd.Color = RectangleLinesEx.Color;
+  OutRectangleLinesEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleLinesEx.CommandID : -1; 
+  return OutRectangleLinesEx;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRounded(FIntPoint Position, FIntPoint Size, float Roundness, int32 Segments, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleRounded& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleRounded(FIntPoint Position, FIntPoint Size, float Roundness, int32 Segments, FLinearColor Color, FRlDrawRectangleRounded& RectangleRounded) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleRounded;
   Cmd.Position = Position;
@@ -1123,41 +1005,37 @@ void URaylibUEBPLibrary::DrawRectangleRounded(FIntPoint Position, FIntPoint Size
   Cmd.Roundness = Roundness;
   Cmd.Segments = Segments;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Roundness = Roundness;
-  OutShape.Segments = Segments;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectangleRounded.CommandID = ID;
+  RectangleRounded.Position = Position;
+  RectangleRounded.Size = Size;
+  RectangleRounded.Roundness = Roundness;
+  RectangleRounded.Segments = Segments;
+  RectangleRounded.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRoundedUpdate(int32 HandleID, const FRlDrawRectangleRounded& InShape, int32& OutHandleID, FRlDrawRectangleRounded& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleRounded();
-    return;
+FRlDrawRectangleRounded URaylibUEBPLibrary::DrawRectangleRoundedUpdate(const FRlDrawRectangleRounded& RectangleRounded) {
+  FRlDrawRectangleRounded OutRectangleRounded;
+  if (RectangleRounded.CommandID < 0) {
+    OutRectangleRounded.CommandID = -1;
+    OutRectangleRounded = FRlDrawRectangleRounded();
+    return OutRectangleRounded;
   }
 
+  OutRectangleRounded = RectangleRounded;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawRectangleRounded;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Roundness = InShape.Roundness;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleRounded.Position;
+  UpdateCmd.Size = RectangleRounded.Size;
+  UpdateCmd.Roundness = RectangleRounded.Roundness;
+  UpdateCmd.Segments = RectangleRounded.Segments;
+  UpdateCmd.Color = RectangleRounded.Color;
+  OutRectangleRounded.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleRounded.CommandID : -1; 
+  return OutRectangleRounded;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRoundedLines(FIntPoint Position, FIntPoint Size, float Roundness, int32 Segments, int32 LineThick, FLinearColor Color, int32& OutHandleID, FRlDrawRectangleRoundedLines& OutShape) {
+void URaylibUEBPLibrary::DrawRectangleRoundedLines(FIntPoint Position, FIntPoint Size, float Roundness, int32 Segments, int32 LineThick, FLinearColor Color, FRlDrawRectangleRoundedLines& RectangleRoundedLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRectangleRoundedLines;
   Cmd.Position = Position;
@@ -1166,113 +1044,104 @@ void URaylibUEBPLibrary::DrawRectangleRoundedLines(FIntPoint Position, FIntPoint
   Cmd.Segments = Segments;
   Cmd.Thick = LineThick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Roundness = Roundness;
-  OutShape.Segments = Segments;
-  OutShape.LineThick = LineThick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  RectangleRoundedLines.CommandID = ID;
+  RectangleRoundedLines.Position = Position;
+  RectangleRoundedLines.Size = Size;
+  RectangleRoundedLines.Roundness = Roundness;
+  RectangleRoundedLines.Segments = Segments;
+  RectangleRoundedLines.LineThick = LineThick;
+  RectangleRoundedLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRectangleRoundedLinesUpdate(int32 HandleID, const FRlDrawRectangleRoundedLines& InShape, int32& OutHandleID, FRlDrawRectangleRoundedLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRectangleRoundedLines();
-    return;
+FRlDrawRectangleRoundedLines URaylibUEBPLibrary::DrawRectangleRoundedLinesUpdate(const FRlDrawRectangleRoundedLines& RectangleRoundedLines) {
+  FRlDrawRectangleRoundedLines OutRectangleRoundedLines;
+  if (RectangleRoundedLines.CommandID < 0) {
+    OutRectangleRoundedLines.CommandID = -1;
+    OutRectangleRoundedLines = FRlDrawRectangleRoundedLines();
+    return OutRectangleRoundedLines;
   }
 
+  OutRectangleRoundedLines = RectangleRoundedLines;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = RectangleRoundedLines.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRectangleRoundedLines;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Size = InShape.Size;
-  UpdateCmd.Roundness = InShape.Roundness;
-  UpdateCmd.Segments = InShape.Segments;
-  UpdateCmd.Thick = InShape.LineThick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = RectangleRoundedLines.Position;
+  UpdateCmd.Size = RectangleRoundedLines.Size;
+  UpdateCmd.Roundness = RectangleRoundedLines.Roundness;
+  UpdateCmd.Segments = RectangleRoundedLines.Segments;
+  UpdateCmd.Thick = RectangleRoundedLines.LineThick;
+  UpdateCmd.Color = RectangleRoundedLines.Color;
+  OutRectangleRoundedLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? RectangleRoundedLines.CommandID : -1; 
+  return OutRectangleRoundedLines;
 }
 
-void URaylibUEBPLibrary::DrawTriangle(FIntPoint V1, FIntPoint V2, FIntPoint V3, FLinearColor Color, int32& OutHandleID, FRlDrawTriangle& OutShape) {
+void URaylibUEBPLibrary::DrawTriangle(FIntPoint V1, FIntPoint V2, FIntPoint V3, FLinearColor Color, FRlDrawTriangle& Triangle) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTriangle;
   Cmd.Points = {V1, V2, V3};
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.V1 = V1;
-  OutShape.V2 = V2;
-  OutShape.V3 = V3;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Triangle.CommandID = ID;
+  Triangle.V1 = V1;
+  Triangle.V2 = V2;
+  Triangle.V3 = V3;
+  Triangle.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTriangleUpdate(int32 HandleID, const FRlDrawTriangle& InShape, int32& OutHandleID, FRlDrawTriangle& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTriangle();
-    return;
+FRlDrawTriangle URaylibUEBPLibrary::DrawTriangleUpdate(const FRlDrawTriangle& Triangle) {
+  FRlDrawTriangle OutTriangle;
+  if (Triangle.CommandID < 0) {
+    OutTriangle.CommandID = -1;
+    OutTriangle = FRlDrawTriangle();
+    return OutTriangle;
   }
 
+  OutTriangle = Triangle;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Triangle.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTriangle;
-  UpdateCmd.Points = {InShape.V1, InShape.V2, InShape.V3};
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points = {Triangle.V1, Triangle.V2, Triangle.V3};
+  UpdateCmd.Color = Triangle.Color;
+  OutTriangle.CommandID = rlCmdBuf.Update(UpdateCmd) ? Triangle.CommandID : -1; 
+  return OutTriangle;
 }
 
-void URaylibUEBPLibrary::DrawTriangleLines(FIntPoint V1, FIntPoint V2, FIntPoint V3, FLinearColor Color, int32& OutHandleID, FRlDrawTriangleLines& OutShape) {
+void URaylibUEBPLibrary::DrawTriangleLines(FIntPoint V1, FIntPoint V2, FIntPoint V3, FLinearColor Color, FRlDrawTriangleLines& TriangleLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTriangleLines;
   Cmd.Points = {V1, V2, V3};
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.V1 = V1;
-  OutShape.V2 = V2;
-  OutShape.V3 = V3;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TriangleLines.CommandID = ID;
+  TriangleLines.V1 = V1;
+  TriangleLines.V2 = V2;
+  TriangleLines.V3 = V3;
+  TriangleLines.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTriangleLinesUpdate(int32 HandleID, const FRlDrawTriangleLines& InShape, int32& OutHandleID, FRlDrawTriangleLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTriangleLines();
-    return;
+FRlDrawTriangleLines URaylibUEBPLibrary::DrawTriangleLinesUpdate(const FRlDrawTriangleLines& TriangleLines) {
+  FRlDrawTriangleLines OutTriangleLines;
+  if (TriangleLines.CommandID < 0) {
+    OutTriangleLines.CommandID = -1;
+    OutTriangleLines = FRlDrawTriangleLines();
+    return OutTriangleLines;
   }
 
+  OutTriangleLines = TriangleLines;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TriangleLines.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTriangleLines;
-  UpdateCmd.Points = {InShape.V1, InShape.V2, InShape.V3};
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points = {TriangleLines.V1, TriangleLines.V2, TriangleLines.V3};
+  UpdateCmd.Color = TriangleLines.Color;
+  OutTriangleLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? TriangleLines.CommandID : -1; 
+  return OutTriangleLines;
 }
 
-void URaylibUEBPLibrary::DrawPoly(FIntPoint Center, int32 Sides, float Radius, float Rotation, FLinearColor Color, int32& OutHandleID, FRlDrawPoly& OutShape) {
+void URaylibUEBPLibrary::DrawPoly(FIntPoint Center, int32 Sides, float Radius, float Rotation, FLinearColor Color, FRlDrawPoly& Poly) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPoly;
   Cmd.Position = Center;
@@ -1280,41 +1149,37 @@ void URaylibUEBPLibrary::DrawPoly(FIntPoint Center, int32 Sides, float Radius, f
   Cmd.Radius = Radius;
   Cmd.Rotation = Rotation;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Sides = Sides;
-  OutShape.Radius = Radius;
-  OutShape.Rotation = Rotation;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Poly.Center = Center;
+  Poly.Sides = Sides;
+  Poly.Radius = Radius;
+  Poly.Rotation = Rotation;
+  Poly.Color = Color;
+  Poly.CommandID = ID;
 }
 
-void URaylibUEBPLibrary::DrawPolyUpdate(int32 HandleID, const FRlDrawPoly& InShape, int32& OutHandleID, FRlDrawPoly& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPoly();
-    return;
+FRlDrawPoly URaylibUEBPLibrary::DrawPolyUpdate(const FRlDrawPoly& Poly) {
+  FRlDrawPoly OutPoly;
+  if (Poly.CommandID < 0) {
+    OutPoly.CommandID = -1;
+    OutPoly = FRlDrawPoly();
+    return OutPoly;
   }
 
+  OutPoly = Poly;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawPoly;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Sides = InShape.Sides;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = Poly.Center;
+  UpdateCmd.Sides = Poly.Sides;
+  UpdateCmd.Radius = Poly.Radius;
+  UpdateCmd.Rotation = Poly.Rotation;
+  UpdateCmd.Color = Poly.Color;
+  OutPoly.CommandID = rlCmdBuf.Update(UpdateCmd) ? Poly.CommandID : -1; 
+  return OutPoly;
 }
 
-void URaylibUEBPLibrary::DrawPolyLines(FIntPoint Center, int32 Sides, float Radius, float Rotation, FLinearColor Color, int32& OutHandleID, FRlDrawPolyLines& OutShape) {
+void URaylibUEBPLibrary::DrawPolyLines(FIntPoint Center, int32 Sides, float Radius, float Rotation, FLinearColor Color, FRlDrawPolyLines& PolyLines) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPolyLines;
   Cmd.Position = Center;
@@ -1322,148 +1187,135 @@ void URaylibUEBPLibrary::DrawPolyLines(FIntPoint Center, int32 Sides, float Radi
   Cmd.Radius = Radius;
   Cmd.Rotation = Rotation;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Sides = Sides;
-  OutShape.Radius = Radius;
-  OutShape.Rotation = Rotation;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  PolyLines.Center = Center;
+  PolyLines.Sides = Sides;
+  PolyLines.Radius = Radius;
+  PolyLines.Rotation = Rotation;
+  PolyLines.Color = Color;
+  PolyLines.CommandID = ID;
 }
 
-void URaylibUEBPLibrary::DrawPolyLinesUpdate(int32 HandleID, const FRlDrawPolyLines& InShape, int32& OutHandleID, FRlDrawPolyLines& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPolyLines();
-    return;
+FRlDrawPolyLines URaylibUEBPLibrary::DrawPolyLinesUpdate(const FRlDrawPolyLines& PolyLines) {
+  FRlDrawPolyLines OutPolyLines;
+  if (PolyLines.CommandID < 0) {
+    OutPolyLines.CommandID = -1;
+    OutPolyLines = FRlDrawPolyLines();
+    return OutPolyLines;
   }
 
+  OutPolyLines = PolyLines;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawPolyLines;
-  UpdateCmd.Position = InShape.Center;
-  UpdateCmd.Sides = InShape.Sides;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = PolyLines.Center;
+  UpdateCmd.Sides = PolyLines.Sides;
+  UpdateCmd.Radius = PolyLines.Radius;
+  UpdateCmd.Rotation = PolyLines.Rotation;
+  UpdateCmd.Color = PolyLines.Color;
+  OutPolyLines.CommandID = rlCmdBuf.Update(UpdateCmd) ? PolyLines.CommandID : -1; 
+  return OutPolyLines;
 }
 
-void URaylibUEBPLibrary::DrawPolyLinesEx(const TArray<FIntPoint>& Points, float Thick, FLinearColor Color, int32& OutHandleID, FRlDrawPolyLinesEx& OutShape) {
+void URaylibUEBPLibrary::DrawPolyLinesEx(const TArray<FIntPoint>& Points, float Thick, FLinearColor Color, FRlDrawPolyLinesEx& PolyLinesEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPolyLinesEx;
   Cmd.Points = Points;
   Cmd.Thick = Thick;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Points = Points;
-  OutShape.Thick = Thick;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  PolyLinesEx.CommandID = ID;
+  PolyLinesEx.Points = Points;
+  PolyLinesEx.Thick = Thick;
+  PolyLinesEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawPolyLinesExUpdate(int32 HandleID, const FRlDrawPolyLinesEx& InShape, int32& OutHandleID, FRlDrawPolyLinesEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPolyLinesEx();
-    return;
+FRlDrawPolyLinesEx URaylibUEBPLibrary::DrawPolyLinesExUpdate(const FRlDrawPolyLinesEx& PolyLinesEx) {
+  FRlDrawPolyLinesEx OutPolyLinesEx;
+  if (PolyLinesEx.CommandID < 0) {
+    OutPolyLinesEx.CommandID = -1;
+    OutPolyLinesEx = FRlDrawPolyLinesEx();
+    return OutPolyLinesEx;
   }
 
+  OutPolyLinesEx = PolyLinesEx;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawPolyLinesEx;
-  UpdateCmd.Points = InShape.Points;
-  UpdateCmd.Thick = InShape.Thick;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points = PolyLinesEx.Points;
+  UpdateCmd.Thick = PolyLinesEx.Thick;
+  UpdateCmd.Color = PolyLinesEx.Color;
+  OutPolyLinesEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? PolyLinesEx.CommandID : -1; 
+  return OutPolyLinesEx;
 }
 
-void URaylibUEBPLibrary::DrawFPS(int32 PosX, int32 PosY, int32& OutHandleID, FRlDrawFPS& OutShape) {
+void URaylibUEBPLibrary::DrawFPS(int32 PosX, int32 PosY, FRlDrawFPS& FPS) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawFPS;
   Cmd.Position = FIntPoint(PosX, PosY);
   Cmd.Color = FLinearColor::White;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.CommandID = ID;
+
+  FPS.CommandID = ID;
+  FPS.PosX = PosX;
+  FPS.PosY = PosY;
 }
 
-void URaylibUEBPLibrary::DrawFPSUpdate(int32 HandleID, const FRlDrawFPS& InShape, int32& OutHandleID, FRlDrawFPS& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawFPS();
-    return;
+FRlDrawFPS URaylibUEBPLibrary::DrawFPSUpdate(const FRlDrawFPS& FPS) {
+  FRlDrawFPS OutFPS;
+  if (FPS.CommandID < 0) {
+    OutFPS.CommandID = -1;
+    OutFPS = FRlDrawFPS();
+    return OutFPS;
   }
 
+  OutFPS = FPS;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawFPS;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
+  UpdateCmd.Position = FIntPoint(FPS.PosX, FPS.PosY);
   UpdateCmd.Color = FLinearColor::White;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  OutFPS.CommandID = rlCmdBuf.Update(UpdateCmd) ? FPS.CommandID : -1; 
+  return OutFPS;
 }
 
-void URaylibUEBPLibrary::DrawText(const FString& Text, int32 PosX, int32 PosY, int32 FontSize, FLinearColor Color, int32& OutHandleID, FRlDrawText& OutShape) {
+void URaylibUEBPLibrary::DrawText(const FString& Text, int32 PosX, int32 PosY, int32 FontSize, FLinearColor Color, FRlDrawText& TextShape) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawText;
   Cmd.Position = FIntPoint(PosX, PosY);
   Cmd.Text = Text;
   Cmd.FontSize = FontSize;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Text = Text;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.FontSize = FontSize;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TextShape.CommandID = ID;
+  TextShape.Text = Text;
+  TextShape.PosX = PosX;
+  TextShape.PosY = PosY;
+  TextShape.FontSize = FontSize;
+  TextShape.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTextUpdate(int32 HandleID, const FRlDrawText& InShape, int32& OutHandleID, FRlDrawText& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawText();
-    return;
+FRlDrawText URaylibUEBPLibrary::DrawTextUpdate(const FRlDrawText& TextShape) {
+  FRlDrawText OutTextShape;
+  if (TextShape.CommandID < 0) {
+    OutTextShape.CommandID = -1;
+    OutTextShape = FRlDrawText();
+    return OutTextShape;
   }
 
+  OutTextShape = TextShape;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextShape.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawText;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.Text = InShape.Text;
-  UpdateCmd.FontSize = InShape.FontSize;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(TextShape.PosX, TextShape.PosY);
+  UpdateCmd.Text = TextShape.Text;
+  UpdateCmd.FontSize = TextShape.FontSize;
+  UpdateCmd.Color = TextShape.Color;
+  OutTextShape.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextShape.CommandID : -1; 
+  return OutTextShape;
 }
 
-void URaylibUEBPLibrary::DrawTextEx(const FString& Text, int32 PosX, int32 PosY, int32 FontSize, float Spacing, FLinearColor Color, int32& OutHandleID, FRlDrawTextEx& OutShape) {
+void URaylibUEBPLibrary::DrawTextEx(const FString& Text, int32 PosX, int32 PosY, int32 FontSize, float Spacing, FLinearColor Color, FRlDrawTextEx& TextEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextEx;
   Cmd.Position = FIntPoint(PosX, PosY);
@@ -1471,42 +1323,39 @@ void URaylibUEBPLibrary::DrawTextEx(const FString& Text, int32 PosX, int32 PosY,
   Cmd.FontSize = FontSize;
   Cmd.Spacing = Spacing;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Text = Text;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.FontSize = FontSize;
-  OutShape.Spacing = Spacing;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TextEx.CommandID = ID;
+  TextEx.Text = Text;
+  TextEx.PosX = PosX;
+  TextEx.PosY = PosY;
+  TextEx.FontSize = FontSize;
+  TextEx.Spacing = Spacing;
+  TextEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTextExUpdate(int32 HandleID, const FRlDrawTextEx& InShape, int32& OutHandleID, FRlDrawTextEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextEx();
-    return;
+FRlDrawTextEx URaylibUEBPLibrary::DrawTextExUpdate(const FRlDrawTextEx& TextEx) {
+  FRlDrawTextEx OutTextEx;
+  if (TextEx.CommandID < 0) {
+    OutTextEx.CommandID = -1;
+    OutTextEx = FRlDrawTextEx();
+    return OutTextEx;
   }
 
+  OutTextEx = TextEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextEx;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.Text = InShape.Text;
-  UpdateCmd.FontSize = InShape.FontSize;
-  UpdateCmd.Spacing = InShape.Spacing;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(TextEx.PosX, TextEx.PosY);
+  UpdateCmd.Text = TextEx.Text;
+  UpdateCmd.FontSize = TextEx.FontSize;
+  UpdateCmd.Spacing = TextEx.Spacing;
+  UpdateCmd.Color = TextEx.Color;
+  OutTextEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextEx.CommandID : -1; 
+  return OutTextEx;
 }
 
-void URaylibUEBPLibrary::DrawTextPro(const FString& Text, FIntPoint Position, FIntPoint Origin, float Rotation, float FontSize, float Spacing, FLinearColor Color, int32& OutHandleID, FRlDrawTextPro& OutShape) {
+void URaylibUEBPLibrary::DrawTextPro(const FString& Text, FIntPoint Position, FIntPoint Origin, float Rotation, float FontSize, float Spacing, FLinearColor Color, FRlDrawTextPro& TextPro) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextPro;
   Cmd.Position = Position;
@@ -1516,85 +1365,79 @@ void URaylibUEBPLibrary::DrawTextPro(const FString& Text, FIntPoint Position, FI
   Cmd.Spacing = Spacing;
   Cmd.Text = Text;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Text = Text;
-  OutShape.Position = Position;
-  OutShape.Origin = Origin;
-  OutShape.Rotation = Rotation;
-  OutShape.FontSize = FontSize;
-  OutShape.Spacing = Spacing;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TextPro.CommandID = ID;
+  TextPro.Text = Text;
+  TextPro.Position = Position;
+  TextPro.Origin = Origin;
+  TextPro.Rotation = Rotation;
+  TextPro.FontSize = FontSize;
+  TextPro.Spacing = Spacing;
+  TextPro.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTextProUpdate(int32 HandleID, const FRlDrawTextPro& InShape, int32& OutHandleID, FRlDrawTextPro& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextPro();
-    return;
+FRlDrawTextPro URaylibUEBPLibrary::DrawTextProUpdate(const FRlDrawTextPro& TextPro) {
+  FRlDrawTextPro OutTextPro;
+  if (TextPro.CommandID < 0) {
+    OutTextPro.CommandID = -1;
+    OutTextPro = FRlDrawTextPro();
+    return OutTextPro;
   }
 
+  OutTextPro = TextPro;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextPro.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextPro;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.StartPos = InShape.Origin;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.FontSize = InShape.FontSize;
-  UpdateCmd.Spacing = InShape.Spacing;
-  UpdateCmd.Text = InShape.Text;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = TextPro.Position;
+  UpdateCmd.StartPos = TextPro.Origin;
+  UpdateCmd.Rotation = TextPro.Rotation;
+  UpdateCmd.FontSize = TextPro.FontSize;
+  UpdateCmd.Spacing = TextPro.Spacing;
+  UpdateCmd.Text = TextPro.Text;
+  UpdateCmd.Color = TextPro.Color;
+  OutTextPro.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextPro.CommandID : -1; 
+  return OutTextPro;
 }
 
-void URaylibUEBPLibrary::DrawTextCodepoint(int32 Codepoint, int32 PosX, int32 PosY, int32 FontSize, FLinearColor Color, int32& OutHandleID, FRlDrawTextCodepoint& OutShape) {
+void URaylibUEBPLibrary::DrawTextCodepoint(int32 Codepoint, int32 PosX, int32 PosY, int32 FontSize, FLinearColor Color, FRlDrawTextCodepoint& TextCodepoint) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextCodepoint;
   Cmd.Position = FIntPoint(PosX, PosY);
   Cmd.FontSize = FontSize;
   Cmd.Codepoints = {Codepoint};
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Codepoint = Codepoint;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.FontSize = FontSize;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TextCodepoint.CommandID = ID;
+  TextCodepoint.Codepoint = Codepoint;
+  TextCodepoint.PosX = PosX;
+  TextCodepoint.PosY = PosY;
+  TextCodepoint.FontSize = FontSize;
+  TextCodepoint.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTextCodepointUpdate(int32 HandleID, const FRlDrawTextCodepoint& InShape, int32& OutHandleID, FRlDrawTextCodepoint& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextCodepoint();
-    return;
+FRlDrawTextCodepoint URaylibUEBPLibrary::DrawTextCodepointUpdate(const FRlDrawTextCodepoint& TextCodepoint) {
+  FRlDrawTextCodepoint OutTextCodepoint;
+  if (TextCodepoint.CommandID < 0) {
+    OutTextCodepoint.CommandID = -1;
+    OutTextCodepoint = FRlDrawTextCodepoint();
+    return OutTextCodepoint;
   }
 
+  OutTextCodepoint = TextCodepoint;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextCodepoint.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextCodepoint;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.FontSize = InShape.FontSize;
-  UpdateCmd.Codepoints = {InShape.Codepoint};
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(TextCodepoint.PosX, TextCodepoint.PosY);
+  UpdateCmd.FontSize = TextCodepoint.FontSize;
+  UpdateCmd.Codepoints = {TextCodepoint.Codepoint};
+  UpdateCmd.Color = TextCodepoint.Color;
+  OutTextCodepoint.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextCodepoint.CommandID : -1; 
+  return OutTextCodepoint;
 }
 
-void URaylibUEBPLibrary::DrawTextCodepoints(const TArray<int32>& Codepoints, int32 PosX, int32 PosY, int32 FontSize, float Spacing, FLinearColor Color, int32& OutHandleID, FRlDrawTextCodepoints& OutShape) {
+void URaylibUEBPLibrary::DrawTextCodepoints(const TArray<int32>& Codepoints, int32 PosX, int32 PosY, int32 FontSize, float Spacing, FLinearColor Color, FRlDrawTextCodepoints& TextCodepoints) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextCodepoints;
   Cmd.Position = FIntPoint(PosX, PosY);
@@ -1602,111 +1445,102 @@ void URaylibUEBPLibrary::DrawTextCodepoints(const TArray<int32>& Codepoints, int
   Cmd.Spacing = Spacing;
   Cmd.Codepoints = Codepoints;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Codepoints = Codepoints;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.FontSize = FontSize;
-  OutShape.Spacing = Spacing;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TextCodepoints.CommandID = ID;
+  TextCodepoints.Codepoints = Codepoints;
+  TextCodepoints.PosX = PosX;
+  TextCodepoints.PosY = PosY;
+  TextCodepoints.FontSize = FontSize;
+  TextCodepoints.Spacing = Spacing;
+  TextCodepoints.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTextCodepointsUpdate(int32 HandleID, const FRlDrawTextCodepoints& InShape, int32& OutHandleID, FRlDrawTextCodepoints& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextCodepoints();
-    return;
+FRlDrawTextCodepoints URaylibUEBPLibrary::DrawTextCodepointsUpdate(const FRlDrawTextCodepoints& TextCodepoints) {
+  FRlDrawTextCodepoints OutTextCodepoints;
+  if (TextCodepoints.CommandID < 0) {
+    OutTextCodepoints.CommandID = -1;
+    OutTextCodepoints = FRlDrawTextCodepoints();
+    return OutTextCodepoints;
   }
 
+  OutTextCodepoints = TextCodepoints;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextCodepoints.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextCodepoints;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.FontSize = InShape.FontSize;
-  UpdateCmd.Spacing = InShape.Spacing;
-  UpdateCmd.Codepoints = InShape.Codepoints;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position = FIntPoint(TextCodepoints.PosX, TextCodepoints.PosY);
+  UpdateCmd.FontSize = TextCodepoints.FontSize;
+  UpdateCmd.Spacing = TextCodepoints.Spacing;
+  UpdateCmd.Codepoints = TextCodepoints.Codepoints;
+  UpdateCmd.Color = TextCodepoints.Color;
+  OutTextCodepoints.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextCodepoints.CommandID : -1; 
+  return OutTextCodepoints;
 }
 
-void URaylibUEBPLibrary::DrawLine3D(FVector StartPos, FVector EndPos, FLinearColor Color, int32& OutHandleID, FRlDrawLine3D& OutShape) {
+void URaylibUEBPLibrary::DrawLine3D(FVector StartPos, FVector EndPos, FLinearColor Color, FRlDrawLine3D& Line3D) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawLine3D;
   Cmd.Position3D = StartPos;
   Cmd.Origin3D = EndPos;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartPos = StartPos;
-  OutShape.EndPos = EndPos;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Line3D.CommandID = ID;
+  Line3D.StartPos = StartPos;
+  Line3D.EndPos = EndPos;
+  Line3D.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawLine3DUpdate(int32 HandleID, const FRlDrawLine3D& InShape, int32& OutHandleID, FRlDrawLine3D& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawLine3D();
-    return;
+FRlDrawLine3D URaylibUEBPLibrary::DrawLine3DUpdate(const FRlDrawLine3D& Line3D) {
+  FRlDrawLine3D OutLine3D;
+  if (Line3D.CommandID < 0) {
+    OutLine3D.CommandID = -1;
+    OutLine3D = FRlDrawLine3D();
+    return OutLine3D;
   }
 
+  OutLine3D = Line3D;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Line3D.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawLine3D;
-  UpdateCmd.Position3D = InShape.StartPos;
-  UpdateCmd.Origin3D = InShape.EndPos;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Line3D.StartPos;
+  UpdateCmd.Origin3D = Line3D.EndPos;
+  UpdateCmd.Color = Line3D.Color;
+  OutLine3D.CommandID = rlCmdBuf.Update(UpdateCmd) ? Line3D.CommandID : -1; 
+  return OutLine3D;
 }
 
-void URaylibUEBPLibrary::DrawPoint3D(FVector Position, FLinearColor Color, int32& OutHandleID, FRlDrawPoint3D& OutShape) {
+void URaylibUEBPLibrary::DrawPoint3D(FVector Position, FLinearColor Color, FRlDrawPoint3D& Point3D) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPoint3D;
   Cmd.Position3D = Position;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Point3D.CommandID = ID;
+  Point3D.Position = Position;
+  Point3D.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawPoint3DUpdate(int32 HandleID, const FRlDrawPoint3D& InShape, int32& OutHandleID, FRlDrawPoint3D& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPoint3D();
-    return;
+FRlDrawPoint3D URaylibUEBPLibrary::DrawPoint3DUpdate(const FRlDrawPoint3D& Point3D) {
+  FRlDrawPoint3D OutPoint3D;
+  if (Point3D.CommandID < 0) {
+    OutPoint3D.CommandID = -1;
+    OutPoint3D = FRlDrawPoint3D();
+    return OutPoint3D;
   }
 
+  OutPoint3D = Point3D;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Point3D.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawPoint3D;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Point3D.Position;
+  UpdateCmd.Color = Point3D.Color;
+  OutPoint3D.CommandID = rlCmdBuf.Update(UpdateCmd) ? Point3D.CommandID : -1; 
+  return OutPoint3D;
 }
 
-void URaylibUEBPLibrary::DrawCircle3D(FVector Center, float Radius, FVector RotationAxis, float RotationAngle, FLinearColor Color, int32& OutHandleID, FRlDrawCircle3D& OutShape) {
+void URaylibUEBPLibrary::DrawCircle3D(FVector Center, float Radius, FVector RotationAxis, float RotationAngle, FLinearColor Color, FRlDrawCircle3D& Circle3D) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCircle3D;
   Cmd.Position3D = Center;
@@ -1714,293 +1548,264 @@ void URaylibUEBPLibrary::DrawCircle3D(FVector Center, float Radius, FVector Rota
   Cmd.RotationAxis = RotationAxis;
   Cmd.RotationAngle = RotationAngle;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.RotationAxis = RotationAxis;
-  OutShape.RotationAngle = RotationAngle;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Circle3D.CommandID = ID;
+  Circle3D.Center = Center;
+  Circle3D.Radius = Radius;
+  Circle3D.RotationAxis = RotationAxis;
+  Circle3D.RotationAngle = RotationAngle;
+  Circle3D.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCircle3DUpdate(int32 HandleID, const FRlDrawCircle3D& InShape, int32& OutHandleID, FRlDrawCircle3D& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCircle3D();
-    return;
+FRlDrawCircle3D URaylibUEBPLibrary::DrawCircle3DUpdate(const FRlDrawCircle3D& Circle3D) {
+  FRlDrawCircle3D OutCircle3D;
+  if (Circle3D.CommandID < 0) {
+    OutCircle3D.CommandID = -1;
+    OutCircle3D = FRlDrawCircle3D();
+    return OutCircle3D;
   }
 
+  OutCircle3D = Circle3D;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Circle3D.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCircle3D;
-  UpdateCmd.Position3D = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.RotationAxis = InShape.RotationAxis;
-  UpdateCmd.RotationAngle = InShape.RotationAngle;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Circle3D.Center;
+  UpdateCmd.Radius = Circle3D.Radius;
+  UpdateCmd.RotationAxis = Circle3D.RotationAxis;
+  UpdateCmd.RotationAngle = Circle3D.RotationAngle;
+  UpdateCmd.Color = Circle3D.Color;
+  OutCircle3D.CommandID = rlCmdBuf.Update(UpdateCmd) ? Circle3D.CommandID : -1; 
+  return OutCircle3D;
 }
 
-void URaylibUEBPLibrary::DrawTriangle3D(FVector V1, FVector V2, FVector V3, FLinearColor Color, int32& OutHandleID, FRlDrawTriangle3D& OutShape) {
+void URaylibUEBPLibrary::DrawTriangle3D(FVector V1, FVector V2, FVector V3, FLinearColor Color, FRlDrawTriangle3D& Triangle3D) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTriangle3D;
   Cmd.Points3D = {V1, V2, V3};
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.V1 = V1;
-  OutShape.V2 = V2;
-  OutShape.V3 = V3;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Triangle3D.CommandID = ID;
+  Triangle3D.V1 = V1;
+  Triangle3D.V2 = V2;
+  Triangle3D.V3 = V3;
+  Triangle3D.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTriangle3DUpdate(int32 HandleID, const FRlDrawTriangle3D& InShape, int32& OutHandleID, FRlDrawTriangle3D& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTriangle3D();
-    return;
+FRlDrawTriangle3D URaylibUEBPLibrary::DrawTriangle3DUpdate(const FRlDrawTriangle3D& Triangle3D) {
+  FRlDrawTriangle3D OutTriangle3D;
+  if (Triangle3D.CommandID < 0) {
+    OutTriangle3D.CommandID = -1;
+    OutTriangle3D = FRlDrawTriangle3D();
+    return OutTriangle3D;
   }
 
+  OutTriangle3D = Triangle3D;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Triangle3D.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTriangle3D;
-  UpdateCmd.Points3D = {InShape.V1, InShape.V2, InShape.V3};
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points3D = {Triangle3D.V1, Triangle3D.V2, Triangle3D.V3};
+  UpdateCmd.Color = Triangle3D.Color;
+  OutTriangle3D.CommandID = rlCmdBuf.Update(UpdateCmd) ? Triangle3D.CommandID : -1; 
+  return OutTriangle3D;
 }
 
-void URaylibUEBPLibrary::DrawTriangleStrip3D(const TArray<FVector>& Points, FLinearColor Color, int32& OutHandleID, FRlDrawTriangleStrip3D& OutShape) {
+void URaylibUEBPLibrary::DrawTriangleStrip3D(const TArray<FVector>& Points, FLinearColor Color, FRlDrawTriangleStrip3D& TriangleStrip3D) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTriangleStrip3D;
   Cmd.Points3D = Points;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Points = Points;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  TriangleStrip3D.CommandID = ID;
+  TriangleStrip3D.Points = Points;
+  TriangleStrip3D.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawTriangleStrip3DUpdate(int32 HandleID, const FRlDrawTriangleStrip3D& InShape, int32& OutHandleID, FRlDrawTriangleStrip3D& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTriangleStrip3D();
-    return;
+FRlDrawTriangleStrip3D URaylibUEBPLibrary::DrawTriangleStrip3DUpdate(const FRlDrawTriangleStrip3D& TriangleStrip3D) {
+  FRlDrawTriangleStrip3D OutTriangleStrip3D;
+  if (TriangleStrip3D.CommandID < 0) {
+    OutTriangleStrip3D.CommandID = -1;
+    OutTriangleStrip3D = FRlDrawTriangleStrip3D();
+    return OutTriangleStrip3D;
   }
 
+  OutTriangleStrip3D = TriangleStrip3D;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TriangleStrip3D.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTriangleStrip3D;
-  UpdateCmd.Points3D = InShape.Points;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Points3D = TriangleStrip3D.Points;
+  UpdateCmd.Color = TriangleStrip3D.Color;
+  OutTriangleStrip3D.CommandID = rlCmdBuf.Update(UpdateCmd) ? TriangleStrip3D.CommandID : -1; 
+  return OutTriangleStrip3D;
 }
 
-void URaylibUEBPLibrary::DrawCube(FVector Position, float Width, float Height, float Length, FLinearColor Color, int32& OutHandleID, FRlDrawCube& OutShape) {
+void URaylibUEBPLibrary::DrawCube(FVector Position, float Width, float Height, float Length, FLinearColor Color, FRlDrawCube& Cube) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCube;
   Cmd.Position3D = Position;
   Cmd.Scale3D = FVector(Width, Height, Length);
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Width = Width;
-  OutShape.Height = Height;
-  OutShape.Length = Length;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Cube.CommandID = ID;
+  Cube.Position = Position;
+  Cube.Width = Width;
+  Cube.Height = Height;
+  Cube.Length = Length;
+  Cube.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCubeUpdate(int32 HandleID, const FRlDrawCube& InShape, int32& OutHandleID, FRlDrawCube& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCube();
-    return;
+FRlDrawCube URaylibUEBPLibrary::DrawCubeUpdate(const FRlDrawCube& Cube) {
+  FRlDrawCube OutCube;
+  if (Cube.CommandID < 0) {
+    OutCube.CommandID = -1;
+    OutCube = FRlDrawCube();
+    return OutCube;
   }
 
+  OutCube = Cube;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCube;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = FVector(InShape.Width, InShape.Height, InShape.Length);
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Cube.Position;
+  UpdateCmd.Scale3D = FVector(Cube.Width, Cube.Height, Cube.Length);
+  UpdateCmd.Color = Cube.Color;
+  OutCube.CommandID = rlCmdBuf.Update(UpdateCmd) ? Cube.CommandID : -1; 
+  return OutCube;
 }
 
-void URaylibUEBPLibrary::DrawCubeV(FVector Position, FVector Size, FLinearColor Color, int32& OutHandleID, FRlDrawCubeV& OutShape) {
+void URaylibUEBPLibrary::DrawCubeV(FVector Position, FVector Size, FLinearColor Color, FRlDrawCubeV& CubeV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCubeV;
   Cmd.Position3D = Position;
   Cmd.Scale3D = Size;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CubeV.CommandID = ID;
+  CubeV.Position = Position;
+  CubeV.Size = Size;
+  CubeV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCubeVUpdate(int32 HandleID, const FRlDrawCubeV& InShape, int32& OutHandleID, FRlDrawCubeV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCubeV();
-    return;
+FRlDrawCubeV URaylibUEBPLibrary::DrawCubeVUpdate(const FRlDrawCubeV& CubeV) {
+  FRlDrawCubeV OutCubeV;
+  if (CubeV.CommandID < 0) {
+    OutCubeV.CommandID = -1;
+    OutCubeV = FRlDrawCubeV();
+    return OutCubeV;
   }
 
+  OutCubeV = CubeV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCubeV;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = InShape.Size;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CubeV.Position;
+  UpdateCmd.Scale3D = CubeV.Size;
+  UpdateCmd.Color = CubeV.Color;
+  OutCubeV.CommandID = rlCmdBuf.Update(UpdateCmd) ? CubeV.CommandID : -1; 
+  return OutCubeV;
 }
 
-void URaylibUEBPLibrary::DrawCubeWires(FVector Position, float Width, float Height, float Length, FLinearColor Color, int32& OutHandleID, FRlDrawCubeWires& OutShape) {
+void URaylibUEBPLibrary::DrawCubeWires(FVector Position, float Width, float Height, float Length, FLinearColor Color, FRlDrawCubeWires& CubeWires) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCubeWires;
   Cmd.Position3D = Position;
   Cmd.Scale3D = FVector(Width, Height, Length);
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Width = Width;
-  OutShape.Height = Height;
-  OutShape.Length = Length;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CubeWires.CommandID = ID;
+  CubeWires.Position = Position;
+  CubeWires.Width = Width;
+  CubeWires.Height = Height;
+  CubeWires.Length = Length;
+  CubeWires.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCubeWiresUpdate(int32 HandleID, const FRlDrawCubeWires& InShape, int32& OutHandleID, FRlDrawCubeWires& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCubeWires();
-    return;
+FRlDrawCubeWires URaylibUEBPLibrary::DrawCubeWiresUpdate(const FRlDrawCubeWires& CubeWires) {
+  FRlDrawCubeWires OutCubeWires;
+  if (CubeWires.CommandID < 0) {
+    OutCubeWires.CommandID = -1;
+    OutCubeWires = FRlDrawCubeWires();
+    return OutCubeWires;
   }
 
+  OutCubeWires = CubeWires;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCubeWires;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = FVector(InShape.Width, InShape.Height, InShape.Length);
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CubeWires.Position;
+  UpdateCmd.Scale3D = FVector(CubeWires.Width, CubeWires.Height, CubeWires.Length);
+  UpdateCmd.Color = CubeWires.Color;
+  OutCubeWires.CommandID = rlCmdBuf.Update(UpdateCmd) ? CubeWires.CommandID : -1; 
+  return OutCubeWires;
 }
 
-void URaylibUEBPLibrary::DrawCubeWiresV(FVector Position, FVector Size, FLinearColor Color, int32& OutHandleID, FRlDrawCubeWiresV& OutShape) {
+void URaylibUEBPLibrary::DrawCubeWiresV(FVector Position, FVector Size, FLinearColor Color, FRlDrawCubeWiresV& CubeWiresV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCubeWiresV;
   Cmd.Position3D = Position;
   Cmd.Scale3D = Size;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.Size = Size;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CubeWiresV.CommandID = ID;
+  CubeWiresV.Position = Position;
+  CubeWiresV.Size = Size;
+  CubeWiresV.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCubeWiresVUpdate(int32 HandleID, const FRlDrawCubeWiresV& InShape, int32& OutHandleID, FRlDrawCubeWiresV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCubeWiresV();
-    return;
+FRlDrawCubeWiresV URaylibUEBPLibrary::DrawCubeWiresVUpdate(const FRlDrawCubeWiresV& CubeWiresV) {
+  FRlDrawCubeWiresV OutCubeWiresV;
+  if (CubeWiresV.CommandID < 0) {
+    OutCubeWiresV.CommandID = -1;
+    OutCubeWiresV = FRlDrawCubeWiresV();
+    return OutCubeWiresV;
   }
 
+  OutCubeWiresV = CubeWiresV;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawCubeWiresV;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = InShape.Size;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CubeWiresV.Position;
+  UpdateCmd.Scale3D = CubeWiresV.Size;
+  UpdateCmd.Color = CubeWiresV.Color;
+  OutCubeWiresV.CommandID = rlCmdBuf.Update(UpdateCmd) ? CubeWiresV.CommandID : -1; 
+  return OutCubeWiresV;
 }
 
-void URaylibUEBPLibrary::DrawSphere(FVector Center, float Radius, FLinearColor Color, int32& OutHandleID, FRlDrawSphere& OutShape) {
+void URaylibUEBPLibrary::DrawSphere(FVector Center, float Radius, FLinearColor Color, FRlDrawSphere& Sphere) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawSphere;
   Cmd.Position3D = Center;
   Cmd.Radius = Radius;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Sphere.CommandID = ID;
+  Sphere.Center = Center;
+  Sphere.Radius = Radius;
+  Sphere.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawSphereUpdate(int32 HandleID, const FRlDrawSphere& InShape, int32& OutHandleID, FRlDrawSphere& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawSphere();
-    return;
+FRlDrawSphere URaylibUEBPLibrary::DrawSphereUpdate(const FRlDrawSphere& Sphere) {
+  FRlDrawSphere OutSphere;
+  if (Sphere.CommandID < 0) {
+    OutSphere.CommandID = -1;
+    OutSphere = FRlDrawSphere();
+    return OutSphere;
   }
 
+  OutSphere = Sphere;
   FRlDrawCommand UpdateCmd;
   UpdateCmd.Type = ERlDrawType::DrawSphere;
-  UpdateCmd.Position3D = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Sphere.Center;
+  UpdateCmd.Radius = Sphere.Radius;
+  UpdateCmd.Color = Sphere.Color;
+  OutSphere.CommandID = rlCmdBuf.Update(UpdateCmd) ? Sphere.CommandID : -1; 
+  return OutSphere;
 }
 
-void URaylibUEBPLibrary::DrawSphereEx(FVector Center, float Radius, int32 Rings, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawSphereEx& OutShape) {
+void URaylibUEBPLibrary::DrawSphereEx(FVector Center, float Radius, int32 Rings, int32 Slices, FLinearColor Color, FRlDrawSphereEx& SphereEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawSphereEx;
   Cmd.Position3D = Center;
@@ -2008,41 +1813,38 @@ void URaylibUEBPLibrary::DrawSphereEx(FVector Center, float Radius, int32 Rings,
   Cmd.Segments = Rings;
   Cmd.Sides = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Rings = Rings;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  SphereEx.CommandID = ID;
+  SphereEx.Center = Center;
+  SphereEx.Radius = Radius;
+  SphereEx.Rings = Rings;
+  SphereEx.Slices = Slices;
+  SphereEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawSphereExUpdate(int32 HandleID, const FRlDrawSphereEx& InShape, int32& OutHandleID, FRlDrawSphereEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawSphereEx();
-    return;
+FRlDrawSphereEx URaylibUEBPLibrary::DrawSphereExUpdate(const FRlDrawSphereEx& SphereEx) {
+  FRlDrawSphereEx OutSphereEx;
+  if (SphereEx.CommandID < 0) {
+    OutSphereEx.CommandID = -1;
+    OutSphereEx = FRlDrawSphereEx();
+    return OutSphereEx;
   }
 
+  OutSphereEx = SphereEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = SphereEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawSphereEx;
-  UpdateCmd.Position3D = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Segments = InShape.Rings;
-  UpdateCmd.Sides = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = SphereEx.Center;
+  UpdateCmd.Radius = SphereEx.Radius;
+  UpdateCmd.Segments = SphereEx.Rings;
+  UpdateCmd.Sides = SphereEx.Slices;
+  UpdateCmd.Color = SphereEx.Color;
+  OutSphereEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? SphereEx.CommandID : -1; 
+  return OutSphereEx;
 }
 
-void URaylibUEBPLibrary::DrawSphereWires(FVector Center, float Radius, int32 Rings, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawSphereWires& OutShape) {
+void URaylibUEBPLibrary::DrawSphereWires(FVector Center, float Radius, int32 Rings, int32 Slices, FLinearColor Color, FRlDrawSphereWires& SphereWires) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawSphereWires;
   Cmd.Position3D = Center;
@@ -2050,41 +1852,38 @@ void URaylibUEBPLibrary::DrawSphereWires(FVector Center, float Radius, int32 Rin
   Cmd.Segments = Rings;
   Cmd.Sides = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Center = Center;
-  OutShape.Radius = Radius;
-  OutShape.Rings = Rings;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  SphereWires.CommandID = ID;
+  SphereWires.Center = Center;
+  SphereWires.Radius = Radius;
+  SphereWires.Rings = Rings;
+  SphereWires.Slices = Slices;
+  SphereWires.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawSphereWiresUpdate(int32 HandleID, const FRlDrawSphereWires& InShape, int32& OutHandleID, FRlDrawSphereWires& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawSphereWires();
-    return;
+FRlDrawSphereWires URaylibUEBPLibrary::DrawSphereWiresUpdate(const FRlDrawSphereWires& SphereWires) {
+  FRlDrawSphereWires OutSphereWires;
+  if (SphereWires.CommandID < 0) {
+    OutSphereWires.CommandID = -1;
+    OutSphereWires = FRlDrawSphereWires();
+    return OutSphereWires;
   }
 
+  OutSphereWires = SphereWires;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = SphereWires.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawSphereWires;
-  UpdateCmd.Position3D = InShape.Center;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Segments = InShape.Rings;
-  UpdateCmd.Sides = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = SphereWires.Center;
+  UpdateCmd.Radius = SphereWires.Radius;
+  UpdateCmd.Segments = SphereWires.Rings;
+  UpdateCmd.Sides = SphereWires.Slices;
+  UpdateCmd.Color = SphereWires.Color;
+  OutSphereWires.CommandID = rlCmdBuf.Update(UpdateCmd) ? SphereWires.CommandID : -1; 
+  return OutSphereWires;
 }
 
-void URaylibUEBPLibrary::DrawCylinder(FVector Position, float RadiusTop, float RadiusBottom, float Height, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawCylinder& OutShape) {
+void URaylibUEBPLibrary::DrawCylinder(FVector Position, float RadiusTop, float RadiusBottom, float Height, int32 Slices, FLinearColor Color, FRlDrawCylinder& Cylinder) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCylinder;
   Cmd.Position3D = Position;
@@ -2093,43 +1892,40 @@ void URaylibUEBPLibrary::DrawCylinder(FVector Position, float RadiusTop, float R
   Cmd.Scale3D.Z = Height;
   Cmd.Slices = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.RadiusTop = RadiusTop;
-  OutShape.RadiusBottom = RadiusBottom;
-  OutShape.Height = Height;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Cylinder.CommandID = ID;
+  Cylinder.Position = Position;
+  Cylinder.RadiusTop = RadiusTop;
+  Cylinder.RadiusBottom = RadiusBottom;
+  Cylinder.Height = Height;
+  Cylinder.Slices = Slices;
+  Cylinder.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCylinderUpdate(int32 HandleID, const FRlDrawCylinder& InShape, int32& OutHandleID, FRlDrawCylinder& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCylinder();
-    return;
+FRlDrawCylinder URaylibUEBPLibrary::DrawCylinderUpdate(const FRlDrawCylinder& Cylinder) {
+  FRlDrawCylinder OutCylinder;
+  if (Cylinder.CommandID < 0) {
+    OutCylinder.CommandID = -1;
+    OutCylinder = FRlDrawCylinder();
+    return OutCylinder;
   }
 
+  OutCylinder = Cylinder;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Cylinder.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCylinder;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Radius = InShape.RadiusTop;
-  UpdateCmd.Size.X = (int32)InShape.RadiusBottom;
-  UpdateCmd.Scale3D.Z = InShape.Height;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Cylinder.Position;
+  UpdateCmd.Radius = Cylinder.RadiusTop;
+  UpdateCmd.Size.X = (int32)Cylinder.RadiusBottom;
+  UpdateCmd.Scale3D.Z = Cylinder.Height;
+  UpdateCmd.Slices = Cylinder.Slices;
+  UpdateCmd.Color = Cylinder.Color;
+  OutCylinder.CommandID = rlCmdBuf.Update(UpdateCmd) ? Cylinder.CommandID : -1; 
+  return OutCylinder;
 }
 
-void URaylibUEBPLibrary::DrawCylinderEx(FVector StartVertex, FVector EndVertex, float StartRadius, float EndRadius, int32 Sides, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawCylinderEx& OutShape) {
+void URaylibUEBPLibrary::DrawCylinderEx(FVector StartVertex, FVector EndVertex, float StartRadius, float EndRadius, int32 Sides, int32 Slices, FLinearColor Color, FRlDrawCylinderEx& CylinderEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCylinderEx;
   Cmd.Position3D = StartVertex;
@@ -2139,45 +1935,42 @@ void URaylibUEBPLibrary::DrawCylinderEx(FVector StartVertex, FVector EndVertex, 
   Cmd.Sides = Sides;
   Cmd.Slices = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartVertex = StartVertex;
-  OutShape.EndVertex = EndVertex;
-  OutShape.StartRadius = StartRadius;
-  OutShape.EndRadius = EndRadius;
-  OutShape.Sides = Sides;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CylinderEx.CommandID = ID;
+  CylinderEx.StartVertex = StartVertex;
+  CylinderEx.EndVertex = EndVertex;
+  CylinderEx.StartRadius = StartRadius;
+  CylinderEx.EndRadius = EndRadius;
+  CylinderEx.Sides = Sides;
+  CylinderEx.Slices = Slices;
+  CylinderEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCylinderExUpdate(int32 HandleID, const FRlDrawCylinderEx& InShape, int32& OutHandleID, FRlDrawCylinderEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCylinderEx();
-    return;
+FRlDrawCylinderEx URaylibUEBPLibrary::DrawCylinderExUpdate(const FRlDrawCylinderEx& CylinderEx) {
+  FRlDrawCylinderEx OutCylinderEx;
+  if (CylinderEx.CommandID < 0) {
+    OutCylinderEx.CommandID = -1;
+    OutCylinderEx = FRlDrawCylinderEx();
+    return OutCylinderEx;
   }
 
+  OutCylinderEx = CylinderEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = CylinderEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCylinderEx;
-  UpdateCmd.Position3D = InShape.StartVertex;
-  UpdateCmd.Origin3D = InShape.EndVertex;
-  UpdateCmd.Radius = InShape.StartRadius;
-  UpdateCmd.Size.X = (int32)InShape.EndRadius;
-  UpdateCmd.Sides = InShape.Sides;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CylinderEx.StartVertex;
+  UpdateCmd.Origin3D = CylinderEx.EndVertex;
+  UpdateCmd.Radius = CylinderEx.StartRadius;
+  UpdateCmd.Size.X = (int32)CylinderEx.EndRadius;
+  UpdateCmd.Sides = CylinderEx.Sides;
+  UpdateCmd.Slices = CylinderEx.Slices;
+  UpdateCmd.Color = CylinderEx.Color;
+  OutCylinderEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? CylinderEx.CommandID : -1; 
+  return OutCylinderEx;
 }
 
-void URaylibUEBPLibrary::DrawCylinderWires(FVector Position, float RadiusTop, float RadiusBottom, float Height, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawCylinderWires& OutShape) {
+void URaylibUEBPLibrary::DrawCylinderWires(FVector Position, float RadiusTop, float RadiusBottom, float Height, int32 Slices, FLinearColor Color, FRlDrawCylinderWires& CylinderWires) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCylinderWires;
   Cmd.Position3D = Position;
@@ -2186,43 +1979,40 @@ void URaylibUEBPLibrary::DrawCylinderWires(FVector Position, float RadiusTop, fl
   Cmd.Scale3D.Z = Height;
   Cmd.Slices = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Position = Position;
-  OutShape.RadiusTop = RadiusTop;
-  OutShape.RadiusBottom = RadiusBottom;
-  OutShape.Height = Height;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CylinderWires.CommandID = ID;
+  CylinderWires.Position = Position;
+  CylinderWires.RadiusTop = RadiusTop;
+  CylinderWires.RadiusBottom = RadiusBottom;
+  CylinderWires.Height = Height;
+  CylinderWires.Slices = Slices;
+  CylinderWires.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCylinderWiresUpdate(int32 HandleID, const FRlDrawCylinderWires& InShape, int32& OutHandleID, FRlDrawCylinderWires& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCylinderWires();
-    return;
+FRlDrawCylinderWires URaylibUEBPLibrary::DrawCylinderWiresUpdate(const FRlDrawCylinderWires& CylinderWires) {
+  FRlDrawCylinderWires OutCylinderWires;
+  if (CylinderWires.CommandID < 0) {
+    OutCylinderWires.CommandID = -1;
+    OutCylinderWires = FRlDrawCylinderWires();
+    return OutCylinderWires;
   }
 
+  OutCylinderWires = CylinderWires;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = CylinderWires.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCylinderWires;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Radius = InShape.RadiusTop;
-  UpdateCmd.Size.X = (int32)InShape.RadiusBottom;
-  UpdateCmd.Scale3D.Z = InShape.Height;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CylinderWires.Position;
+  UpdateCmd.Radius = CylinderWires.RadiusTop;
+  UpdateCmd.Size.X = (int32)CylinderWires.RadiusBottom;
+  UpdateCmd.Scale3D.Z = CylinderWires.Height;
+  UpdateCmd.Slices = CylinderWires.Slices;
+  UpdateCmd.Color = CylinderWires.Color;
+  OutCylinderWires.CommandID = rlCmdBuf.Update(UpdateCmd) ? CylinderWires.CommandID : -1; 
+  return OutCylinderWires;
 }
 
-void URaylibUEBPLibrary::DrawCylinderWiresEx(FVector StartVertex, FVector EndVertex, float StartRadius, float EndRadius, int32 Sides, int32 Slices, FLinearColor Color, int32& OutHandleID, FRlDrawCylinderWiresEx& OutShape) {
+void URaylibUEBPLibrary::DrawCylinderWiresEx(FVector StartVertex, FVector EndVertex, float StartRadius, float EndRadius, int32 Sides, int32 Slices, FLinearColor Color, FRlDrawCylinderWiresEx& CylinderWiresEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCylinderWiresEx;
   Cmd.Position3D = StartVertex;
@@ -2232,45 +2022,42 @@ void URaylibUEBPLibrary::DrawCylinderWiresEx(FVector StartVertex, FVector EndVer
   Cmd.Sides = Sides;
   Cmd.Slices = Slices;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.StartVertex = StartVertex;
-  OutShape.EndVertex = EndVertex;
-  OutShape.StartRadius = StartRadius;
-  OutShape.EndRadius = EndRadius;
-  OutShape.Sides = Sides;
-  OutShape.Slices = Slices;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CylinderWiresEx.CommandID = ID;
+  CylinderWiresEx.StartVertex = StartVertex;
+  CylinderWiresEx.EndVertex = EndVertex;
+  CylinderWiresEx.StartRadius = StartRadius;
+  CylinderWiresEx.EndRadius = EndRadius;
+  CylinderWiresEx.Sides = Sides;
+  CylinderWiresEx.Slices = Slices;
+  CylinderWiresEx.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCylinderWiresExUpdate(int32 HandleID, const FRlDrawCylinderWiresEx& InShape, int32& OutHandleID, FRlDrawCylinderWiresEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCylinderWiresEx();
-    return;
+FRlDrawCylinderWiresEx URaylibUEBPLibrary::DrawCylinderWiresExUpdate(const FRlDrawCylinderWiresEx& CylinderWiresEx) {
+  FRlDrawCylinderWiresEx OutCylinderWiresEx;
+  if (CylinderWiresEx.CommandID < 0) {
+    OutCylinderWiresEx.CommandID = -1;
+    OutCylinderWiresEx = FRlDrawCylinderWiresEx();
+    return OutCylinderWiresEx;
   }
 
+  OutCylinderWiresEx = CylinderWiresEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = CylinderWiresEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCylinderWiresEx;
-  UpdateCmd.Position3D = InShape.StartVertex;
-  UpdateCmd.Origin3D = InShape.EndVertex;
-  UpdateCmd.Radius = InShape.StartRadius;
-  UpdateCmd.Size.X = (int32)InShape.EndRadius;
-  UpdateCmd.Sides = InShape.Sides;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CylinderWiresEx.StartVertex;
+  UpdateCmd.Origin3D = CylinderWiresEx.EndVertex;
+  UpdateCmd.Radius = CylinderWiresEx.StartRadius;
+  UpdateCmd.Size.X = (int32)CylinderWiresEx.EndRadius;
+  UpdateCmd.Sides = CylinderWiresEx.Sides;
+  UpdateCmd.Slices = CylinderWiresEx.Slices;
+  UpdateCmd.Color = CylinderWiresEx.Color;
+  OutCylinderWiresEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? CylinderWiresEx.CommandID : -1; 
+  return OutCylinderWiresEx;
 }
 
-void URaylibUEBPLibrary::DrawCapsule(FVector Start, FVector End, float Radius, int32 Slices, int32 Rings, FLinearColor Color, int32& OutHandleID, FRlDrawCapsule& OutShape) {
+void URaylibUEBPLibrary::DrawCapsule(FVector Start, FVector End, float Radius, int32 Slices, int32 Rings, FLinearColor Color, FRlDrawCapsule& Capsule) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCapsule;
   Cmd.Position3D = Start;
@@ -2279,43 +2066,40 @@ void URaylibUEBPLibrary::DrawCapsule(FVector Start, FVector End, float Radius, i
   Cmd.Slices = Slices;
   Cmd.Segments = Rings;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Start = Start;
-  OutShape.End = End;
-  OutShape.Radius = Radius;
-  OutShape.Slices = Slices;
-  OutShape.Rings = Rings;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Capsule.CommandID = ID;
+  Capsule.Start = Start;
+  Capsule.End = End;
+  Capsule.Radius = Radius;
+  Capsule.Slices = Slices;
+  Capsule.Rings = Rings;
+  Capsule.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCapsuleUpdate(int32 HandleID, const FRlDrawCapsule& InShape, int32& OutHandleID, FRlDrawCapsule& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCapsule();
-    return;
+FRlDrawCapsule URaylibUEBPLibrary::DrawCapsuleUpdate(const FRlDrawCapsule& Capsule) {
+  FRlDrawCapsule OutCapsule;
+  if (Capsule.CommandID < 0) {
+    OutCapsule.CommandID = -1;
+    OutCapsule = FRlDrawCapsule();
+    return OutCapsule;
   }
 
+  OutCapsule = Capsule;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Capsule.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCapsule;
-  UpdateCmd.Position3D = InShape.Start;
-  UpdateCmd.Origin3D = InShape.End;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Segments = InShape.Rings;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Capsule.Start;
+  UpdateCmd.Origin3D = Capsule.End;
+  UpdateCmd.Radius = Capsule.Radius;
+  UpdateCmd.Slices = Capsule.Slices;
+  UpdateCmd.Segments = Capsule.Rings;
+  UpdateCmd.Color = Capsule.Color;
+  OutCapsule.CommandID = rlCmdBuf.Update(UpdateCmd) ? Capsule.CommandID : -1; 
+  return OutCapsule;
 }
 
-void URaylibUEBPLibrary::DrawCapsuleWires(FVector Start, FVector End, float Radius, int32 Slices, int32 Rings, FLinearColor Color, int32& OutHandleID, FRlDrawCapsuleWires& OutShape) {
+void URaylibUEBPLibrary::DrawCapsuleWires(FVector Start, FVector End, float Radius, int32 Slices, int32 Rings, FLinearColor Color, FRlDrawCapsuleWires& CapsuleWires) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawCapsuleWires;
   Cmd.Position3D = Start;
@@ -2324,185 +2108,172 @@ void URaylibUEBPLibrary::DrawCapsuleWires(FVector Start, FVector End, float Radi
   Cmd.Slices = Slices;
   Cmd.Segments = Rings;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Start = Start;
-  OutShape.End = End;
-  OutShape.Radius = Radius;
-  OutShape.Slices = Slices;
-  OutShape.Rings = Rings;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  CapsuleWires.CommandID = ID;
+  CapsuleWires.Start = Start;
+  CapsuleWires.End = End;
+  CapsuleWires.Radius = Radius;
+  CapsuleWires.Slices = Slices;
+  CapsuleWires.Rings = Rings;
+  CapsuleWires.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawCapsuleWiresUpdate(int32 HandleID, const FRlDrawCapsuleWires& InShape, int32& OutHandleID, FRlDrawCapsuleWires& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawCapsuleWires();
-    return;
+FRlDrawCapsuleWires URaylibUEBPLibrary::DrawCapsuleWiresUpdate(const FRlDrawCapsuleWires& CapsuleWires) {
+  FRlDrawCapsuleWires OutCapsuleWires;
+  if (CapsuleWires.CommandID < 0) {
+    OutCapsuleWires.CommandID = -1;
+    OutCapsuleWires = FRlDrawCapsuleWires();
+    return OutCapsuleWires;
   }
 
+  OutCapsuleWires = CapsuleWires;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = CapsuleWires.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawCapsuleWires;
-  UpdateCmd.Position3D = InShape.Start;
-  UpdateCmd.Origin3D = InShape.End;
-  UpdateCmd.Radius = InShape.Radius;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Segments = InShape.Rings;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = CapsuleWires.Start;
+  UpdateCmd.Origin3D = CapsuleWires.End;
+  UpdateCmd.Radius = CapsuleWires.Radius;
+  UpdateCmd.Slices = CapsuleWires.Slices;
+  UpdateCmd.Segments = CapsuleWires.Rings;
+  UpdateCmd.Color = CapsuleWires.Color;
+  OutCapsuleWires.CommandID = rlCmdBuf.Update(UpdateCmd) ? CapsuleWires.CommandID : -1; 
+  return OutCapsuleWires;
 }
 
-void URaylibUEBPLibrary::DrawPlane(FVector CenterPos, FVector Size, FLinearColor Color, int32& OutHandleID, FRlDrawPlane& OutShape) {
+void URaylibUEBPLibrary::DrawPlane(FVector CenterPos, FVector Size, FLinearColor Color, FRlDrawPlane& Plane) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawPlane;
   Cmd.Position3D = CenterPos;
   Cmd.Scale3D = Size;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.CenterPos = CenterPos;
-  OutShape.Size = Size;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Plane.CommandID = ID;
+  Plane.CenterPos = CenterPos;
+  Plane.Size = Size;
+  Plane.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawPlaneUpdate(int32 HandleID, const FRlDrawPlane& InShape, int32& OutHandleID, FRlDrawPlane& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawPlane();
-    return;
+FRlDrawPlane URaylibUEBPLibrary::DrawPlaneUpdate(const FRlDrawPlane& Plane) {
+  FRlDrawPlane OutPlane;
+  if (Plane.CommandID < 0) {
+    OutPlane.CommandID = -1;
+    OutPlane = FRlDrawPlane();
+    return OutPlane;
   }
 
+  OutPlane = Plane;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Plane.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawPlane;
-  UpdateCmd.Position3D = InShape.CenterPos;
-  UpdateCmd.Scale3D = InShape.Size;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = Plane.CenterPos;
+  UpdateCmd.Scale3D = Plane.Size;
+  UpdateCmd.Color = Plane.Color;
+  OutPlane.CommandID = rlCmdBuf.Update(UpdateCmd) ? Plane.CommandID : -1; 
+  return OutPlane;
 }
 
-void URaylibUEBPLibrary::DrawRay(FVector RayPos, FVector RayDir, FLinearColor Color, int32& OutHandleID, FRlDrawRay& OutShape) {
+void URaylibUEBPLibrary::DrawRay(FVector RayPos, FVector RayDir, FLinearColor Color, FRlDrawRay& Ray) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawRay;
   Cmd.RayOrigin = RayPos;
   Cmd.RayDir = RayDir;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.RayPos = RayPos;
-  OutShape.RayDir = RayDir;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  Ray.CommandID = ID;
+  Ray.RayPos = RayPos;
+  Ray.RayDir = RayDir;
+  Ray.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawRayUpdate(int32 HandleID, const FRlDrawRay& InShape, int32& OutHandleID, FRlDrawRay& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawRay();
-    return;
+FRlDrawRay URaylibUEBPLibrary::DrawRayUpdate(const FRlDrawRay& Ray) {
+  FRlDrawRay OutRay;
+  if (Ray.CommandID < 0) {
+    OutRay.CommandID = -1;
+    OutRay = FRlDrawRay();
+    return OutRay;
   }
 
+  OutRay = Ray;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Ray.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawRay;
-  UpdateCmd.RayOrigin = InShape.RayPos;
-  UpdateCmd.RayDir = InShape.RayDir;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.RayOrigin = Ray.RayPos;
+  UpdateCmd.RayDir = Ray.RayDir;
+  UpdateCmd.Color = Ray.Color;
+  OutRay.CommandID = rlCmdBuf.Update(UpdateCmd) ? Ray.CommandID : -1; 
+  return OutRay;
 }
 
-void URaylibUEBPLibrary::DrawGrid(int32 Slices, float Spacing, int32& OutHandleID, FRlDrawGrid& OutShape) {
+void URaylibUEBPLibrary::DrawGrid(int32 Slices, float Spacing, FRlDrawGrid& Grid) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawGrid;
   Cmd.Slices = Slices;
   Cmd.Thick = Spacing;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Slices = Slices;
-  OutShape.Spacing = Spacing;
-  OutShape.CommandID = ID;
+
+  Grid.CommandID = ID;
+  Grid.Slices = Slices;
+  Grid.Spacing = Spacing;
 }
 
-void URaylibUEBPLibrary::DrawGridUpdate(int32 HandleID, const FRlDrawGrid& InShape, int32& OutHandleID, FRlDrawGrid& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawGrid();
-    return;
+FRlDrawGrid URaylibUEBPLibrary::DrawGridUpdate(const FRlDrawGrid& Grid) {
+  FRlDrawGrid OutGrid;
+  if (Grid.CommandID < 0) {
+    OutGrid.CommandID = -1;
+    OutGrid = FRlDrawGrid();
+    return OutGrid;
   }
 
+  OutGrid = Grid;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Grid.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawGrid;
-  UpdateCmd.Slices = InShape.Slices;
-  UpdateCmd.Thick = InShape.Spacing;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Slices = Grid.Slices;
+  UpdateCmd.Thick = Grid.Spacing;
+  OutGrid.CommandID = rlCmdBuf.Update(UpdateCmd) ? Grid.CommandID : -1; 
+  return OutGrid;
 }
 
-void URaylibUEBPLibrary::DrawModel(const FString& ModelPath, FVector Position, float Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawModel& OutShape) {
+void URaylibUEBPLibrary::DrawModel(const FString& ModelPath, FVector Position, float Scale, FLinearColor Tint, FRlDrawModel& Model) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawModel;
   Cmd.ModelPath = ModelPath;
   Cmd.Position3D = Position;
   Cmd.Scale3D = FVector(Scale);
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.ModelPath = ModelPath;
-  OutShape.Position = Position;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  Model.CommandID = ID;
+  Model.ModelPath = ModelPath;
+  Model.Position = Position;
+  Model.Scale = Scale;
+  Model.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawModelUpdate(int32 HandleID, const FRlDrawModel& InShape, int32& OutHandleID, FRlDrawModel& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawModel();
-    return;
+FRlDrawModel URaylibUEBPLibrary::DrawModelUpdate(const FRlDrawModel& Model) {
+  FRlDrawModel OutModel;
+  if (Model.CommandID < 0) {
+    OutModel.CommandID = -1;
+    OutModel = FRlDrawModel();
+    return OutModel;
   }
 
+  OutModel = Model;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Model.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawModel;
-  UpdateCmd.ModelPath = InShape.ModelPath;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.ModelPath = Model.ModelPath;
+  UpdateCmd.Position3D = Model.Position;
+  UpdateCmd.Scale3D = FVector(Model.Scale);
+  UpdateCmd.Color = Model.Tint;
+  OutModel.CommandID = rlCmdBuf.Update(UpdateCmd) ? Model.CommandID : -1; 
+  return OutModel;
 }
 
-void URaylibUEBPLibrary::DrawModelEx(const FString& ModelPath, FVector Position, FVector RotationAxis, float RotationAngle, FVector Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawModelEx& OutShape) {
+void URaylibUEBPLibrary::DrawModelEx(const FString& ModelPath, FVector Position, FVector RotationAxis, float RotationAngle, FVector Scale, FLinearColor Tint, FRlDrawModelEx& ModelEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawModelEx;
   Cmd.ModelPath = ModelPath;
@@ -2511,82 +2282,76 @@ void URaylibUEBPLibrary::DrawModelEx(const FString& ModelPath, FVector Position,
   Cmd.RotationAngle = RotationAngle;
   Cmd.Scale3D = Scale;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.ModelPath = ModelPath;
-  OutShape.Position = Position;
-  OutShape.RotationAxis = RotationAxis;
-  OutShape.RotationAngle = RotationAngle;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  ModelEx.CommandID = ID;
+  ModelEx.ModelPath = ModelPath;
+  ModelEx.Position = Position;
+  ModelEx.RotationAxis = RotationAxis;
+  ModelEx.RotationAngle = RotationAngle;
+  ModelEx.Scale = Scale;
+  ModelEx.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawModelExUpdate(int32 HandleID, const FRlDrawModelEx& InShape, int32& OutHandleID, FRlDrawModelEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawModelEx();
-    return;
+FRlDrawModelEx URaylibUEBPLibrary::DrawModelExUpdate(const FRlDrawModelEx& ModelEx) {
+  FRlDrawModelEx OutModelEx;
+  if (ModelEx.CommandID < 0) {
+    OutModelEx.CommandID = -1;
+    OutModelEx = FRlDrawModelEx();
+    return OutModelEx;
   }
 
+  OutModelEx = ModelEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = ModelEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawModelEx;
-  UpdateCmd.ModelPath = InShape.ModelPath;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.RotationAxis = InShape.RotationAxis;
-  UpdateCmd.RotationAngle = InShape.RotationAngle;
-  UpdateCmd.Scale3D = InShape.Scale;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.ModelPath = ModelEx.ModelPath;
+  UpdateCmd.Position3D = ModelEx.Position;
+  UpdateCmd.RotationAxis = ModelEx.RotationAxis;
+  UpdateCmd.RotationAngle = ModelEx.RotationAngle;
+  UpdateCmd.Scale3D = ModelEx.Scale;
+  UpdateCmd.Color = ModelEx.Tint;
+  OutModelEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? ModelEx.CommandID : -1; 
+  return OutModelEx;
 }
 
-void URaylibUEBPLibrary::DrawModelWires(const FString& ModelPath, FVector Position, float Scale, FLinearColor WireColor, int32& OutHandleID, FRlDrawModelWires& OutShape) {
+void URaylibUEBPLibrary::DrawModelWires(const FString& ModelPath, FVector Position, float Scale, FLinearColor WireColor, FRlDrawModelWires& ModelWires) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawModelWires;
   Cmd.ModelPath = ModelPath;
   Cmd.Position3D = Position;
   Cmd.Scale3D = FVector(Scale);
   Cmd.Color = WireColor;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.ModelPath = ModelPath;
-  OutShape.Position = Position;
-  OutShape.Scale = Scale;
-  OutShape.WireColor = WireColor;
-  OutShape.CommandID = ID;
+
+  ModelWires.CommandID = ID;
+  ModelWires.ModelPath = ModelPath;
+  ModelWires.Position = Position;
+  ModelWires.Scale = Scale;
+  ModelWires.WireColor = WireColor;
 }
 
-void URaylibUEBPLibrary::DrawModelWiresUpdate(int32 HandleID, const FRlDrawModelWires& InShape, int32& OutHandleID, FRlDrawModelWires& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawModelWires();
-    return;
+FRlDrawModelWires URaylibUEBPLibrary::DrawModelWiresUpdate(const FRlDrawModelWires& ModelWires) {
+  FRlDrawModelWires OutModelWires;
+  if (ModelWires.CommandID < 0) {
+    OutModelWires.CommandID = -1;
+    OutModelWires = FRlDrawModelWires();
+    return OutModelWires;
   }
 
+  OutModelWires = ModelWires;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = ModelWires.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawModelWires;
-  UpdateCmd.ModelPath = InShape.ModelPath;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Color = InShape.WireColor;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.ModelPath = ModelWires.ModelPath;
+  UpdateCmd.Position3D = ModelWires.Position;
+  UpdateCmd.Scale3D = FVector(ModelWires.Scale);
+  UpdateCmd.Color = ModelWires.WireColor;
+  OutModelWires.CommandID = rlCmdBuf.Update(UpdateCmd) ? ModelWires.CommandID : -1; 
+  return OutModelWires;
 }
 
-void URaylibUEBPLibrary::DrawModelWiresEx(const FString& ModelPath, FVector Position, FVector RotationAxis, float RotationAngle, FVector Scale, FLinearColor WireColor, int32& OutHandleID, FRlDrawModelWiresEx& OutShape) {
+void URaylibUEBPLibrary::DrawModelWiresEx(const FString& ModelPath, FVector Position, FVector RotationAxis, float RotationAngle, FVector Scale, FLinearColor WireColor, FRlDrawModelWiresEx& ModelWiresEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawModelWiresEx;
   Cmd.ModelPath = ModelPath;
@@ -2595,79 +2360,73 @@ void URaylibUEBPLibrary::DrawModelWiresEx(const FString& ModelPath, FVector Posi
   Cmd.RotationAngle = RotationAngle;
   Cmd.Scale3D = Scale;
   Cmd.Color = WireColor;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.ModelPath = ModelPath;
-  OutShape.Position = Position;
-  OutShape.RotationAxis = RotationAxis;
-  OutShape.RotationAngle = RotationAngle;
-  OutShape.Scale = Scale;
-  OutShape.WireColor = WireColor;
-  OutShape.CommandID = ID;
+
+  ModelWiresEx.CommandID = ID;
+  ModelWiresEx.ModelPath = ModelPath;
+  ModelWiresEx.Position = Position;
+  ModelWiresEx.RotationAxis = RotationAxis;
+  ModelWiresEx.RotationAngle = RotationAngle;
+  ModelWiresEx.Scale = Scale;
+  ModelWiresEx.WireColor = WireColor;
 }
 
-void URaylibUEBPLibrary::DrawModelWiresExUpdate(int32 HandleID, const FRlDrawModelWiresEx& InShape, int32& OutHandleID, FRlDrawModelWiresEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawModelWiresEx();
-    return;
+FRlDrawModelWiresEx URaylibUEBPLibrary::DrawModelWiresExUpdate(const FRlDrawModelWiresEx& ModelWiresEx) {
+  FRlDrawModelWiresEx OutModelWiresEx;
+  if (ModelWiresEx.CommandID < 0) {
+    OutModelWiresEx.CommandID = -1;
+    OutModelWiresEx = FRlDrawModelWiresEx();
+    return OutModelWiresEx;
   }
 
+  OutModelWiresEx = ModelWiresEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = ModelWiresEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawModelWiresEx;
-  UpdateCmd.ModelPath = InShape.ModelPath;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.RotationAxis = InShape.RotationAxis;
-  UpdateCmd.RotationAngle = InShape.RotationAngle;
-  UpdateCmd.Scale3D = InShape.Scale;
-  UpdateCmd.Color = InShape.WireColor;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.ModelPath = ModelWiresEx.ModelPath;
+  UpdateCmd.Position3D = ModelWiresEx.Position;
+  UpdateCmd.RotationAxis = ModelWiresEx.RotationAxis;
+  UpdateCmd.RotationAngle = ModelWiresEx.RotationAngle;
+  UpdateCmd.Scale3D = ModelWiresEx.Scale;
+  UpdateCmd.Color = ModelWiresEx.WireColor;
+  OutModelWiresEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? ModelWiresEx.CommandID : -1; 
+  return OutModelWiresEx;
 }
 
-void URaylibUEBPLibrary::DrawBoundingBox(const FVector& Min, const FVector& Max, FLinearColor Color, int32& OutHandleID, FRlDrawBoundingBox& OutShape) {
+void URaylibUEBPLibrary::DrawBoundingBox(const FVector& Min, const FVector& Max, FLinearColor Color, FRlDrawBoundingBox& BoundingBox) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawBoundingBox;
   Cmd.Position3D = Min;
   Cmd.Scale3D = Max - Min;
   Cmd.Color = Color;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.Min = Min;
-  OutShape.Max = Max;
-  OutShape.Color = Color;
-  OutShape.CommandID = ID;
+
+  BoundingBox.CommandID = ID;
+  BoundingBox.Min = Min;
+  BoundingBox.Max = Max;
+  BoundingBox.Color = Color;
 }
 
-void URaylibUEBPLibrary::DrawBoundingBoxUpdate(int32 HandleID, const FRlDrawBoundingBox& InShape, int32& OutHandleID, FRlDrawBoundingBox& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawBoundingBox();
-    return;
+FRlDrawBoundingBox URaylibUEBPLibrary::DrawBoundingBoxUpdate(const FRlDrawBoundingBox& BoundingBox) {
+  FRlDrawBoundingBox OutBoundingBox;
+  if (BoundingBox.CommandID < 0) {
+    OutBoundingBox.CommandID = -1;
+    OutBoundingBox = FRlDrawBoundingBox();
+    return OutBoundingBox;
   }
 
+  OutBoundingBox = BoundingBox;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = BoundingBox.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawBoundingBox;
-  UpdateCmd.Position3D = InShape.Min;
-  UpdateCmd.Scale3D = InShape.Max - InShape.Min;
-  UpdateCmd.Color = InShape.Color;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.Position3D = BoundingBox.Min;
+  UpdateCmd.Scale3D = BoundingBox.Max - BoundingBox.Min;
+  UpdateCmd.Color = BoundingBox.Color;
+  OutBoundingBox.CommandID = rlCmdBuf.Update(UpdateCmd) ? BoundingBox.CommandID : -1; 
+  return OutBoundingBox;
 }
 
-void URaylibUEBPLibrary::DrawBillboard(const FString& TexturePath, FVector Position, float Rotation, float Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawBillboard& OutShape) {
+void URaylibUEBPLibrary::DrawBillboard(const FString& TexturePath, FVector Position, float Rotation, float Scale, FLinearColor Tint, FRlDrawBillboard& Billboard) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawBillboard;
   Cmd.TexturePath = TexturePath;
@@ -2675,41 +2434,38 @@ void URaylibUEBPLibrary::DrawBillboard(const FString& TexturePath, FVector Posit
   Cmd.Rotation = Rotation;
   Cmd.Scale3D = FVector(Scale);
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.Position = Position;
-  OutShape.Rotation = Rotation;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  Billboard.CommandID = ID;
+  Billboard.TexturePath = TexturePath;
+  Billboard.Position = Position;
+  Billboard.Rotation = Rotation;
+  Billboard.Scale = Scale;
+  Billboard.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawBillboardUpdate(int32 HandleID, const FRlDrawBillboard& InShape, int32& OutHandleID, FRlDrawBillboard& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawBillboard();
-    return;
+FRlDrawBillboard URaylibUEBPLibrary::DrawBillboardUpdate(const FRlDrawBillboard& Billboard) {
+  FRlDrawBillboard OutBillboard;
+  if (Billboard.CommandID < 0) {
+    OutBillboard.CommandID = -1;
+    OutBillboard = FRlDrawBillboard();
+    return OutBillboard;
   }
 
+  OutBillboard = Billboard;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Billboard.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawBillboard;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = Billboard.TexturePath;
+  UpdateCmd.Position3D = Billboard.Position;
+  UpdateCmd.Rotation = Billboard.Rotation;
+  UpdateCmd.Scale3D = FVector(Billboard.Scale);
+  UpdateCmd.Color = Billboard.Tint;
+  OutBillboard.CommandID = rlCmdBuf.Update(UpdateCmd) ? Billboard.CommandID : -1; 
+  return OutBillboard;
 }
 
-void URaylibUEBPLibrary::DrawBillboardRec(const FString& TexturePath, FIntPoint SourceRec, FVector Position, float Rotation, float Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawBillboardRec& OutShape) {
+void URaylibUEBPLibrary::DrawBillboardRec(const FString& TexturePath, FIntPoint SourceRec, FVector Position, float Rotation, float Scale, FLinearColor Tint, FRlDrawBillboardRec& BillboardRec) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawBillboardRec;
   Cmd.TexturePath = TexturePath;
@@ -2718,43 +2474,40 @@ void URaylibUEBPLibrary::DrawBillboardRec(const FString& TexturePath, FIntPoint 
   Cmd.Rotation = Rotation;
   Cmd.Scale3D = FVector(Scale);
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.SourceRec = SourceRec;
-  OutShape.Position = Position;
-  OutShape.Rotation = Rotation;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  BillboardRec.CommandID = ID;
+  BillboardRec.TexturePath = TexturePath;
+  BillboardRec.SourceRec = SourceRec;
+  BillboardRec.Position = Position;
+  BillboardRec.Rotation = Rotation;
+  BillboardRec.Scale = Scale;
+  BillboardRec.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawBillboardRecUpdate(int32 HandleID, const FRlDrawBillboardRec& InShape, int32& OutHandleID, FRlDrawBillboardRec& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawBillboardRec();
-    return;
+FRlDrawBillboardRec URaylibUEBPLibrary::DrawBillboardRecUpdate(const FRlDrawBillboardRec& BillboardRec) {
+  FRlDrawBillboardRec OutBillboardRec;
+  if (BillboardRec.CommandID < 0) {
+    OutBillboardRec.CommandID = -1;
+    OutBillboardRec = FRlDrawBillboardRec();
+    return OutBillboardRec;
   }
 
+  OutBillboardRec = BillboardRec;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = BillboardRec.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawBillboardRec;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.SourcePos = InShape.SourceRec;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = BillboardRec.TexturePath;
+  UpdateCmd.SourcePos = BillboardRec.SourceRec;
+  UpdateCmd.Position3D = BillboardRec.Position;
+  UpdateCmd.Rotation = BillboardRec.Rotation;
+  UpdateCmd.Scale3D = FVector(BillboardRec.Scale);
+  UpdateCmd.Color = BillboardRec.Tint;
+  OutBillboardRec.CommandID = rlCmdBuf.Update(UpdateCmd) ? BillboardRec.CommandID : -1; 
+  return OutBillboardRec;
 }
 
-void URaylibUEBPLibrary::DrawBillboardPro(const FString& TexturePath, FIntPoint SourceRec, FVector Position, FVector Up, FVector Right, FVector Forward, float Rotation, float Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawBillboardPro& OutShape) {
+void URaylibUEBPLibrary::DrawBillboardPro(const FString& TexturePath, FIntPoint SourceRec, FVector Position, FVector Up, FVector Right, FVector Forward, float Rotation, float Scale, FLinearColor Tint, FRlDrawBillboardPro& BillboardPro) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawBillboardPro;
   Cmd.TexturePath = TexturePath;
@@ -2764,120 +2517,111 @@ void URaylibUEBPLibrary::DrawBillboardPro(const FString& TexturePath, FIntPoint 
   Cmd.Scale3D = FVector(Scale);
   Cmd.Rotation = Rotation;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.SourceRec = SourceRec;
-  OutShape.Position = Position;
-  OutShape.Up = Up;
-  OutShape.Right = Right;
-  OutShape.Forward = Forward;
-  OutShape.Rotation = Rotation;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  BillboardPro.CommandID = ID;
+  BillboardPro.TexturePath = TexturePath;
+  BillboardPro.SourceRec = SourceRec;
+  BillboardPro.Position = Position;
+  BillboardPro.Up = Up;
+  BillboardPro.Right = Right;
+  BillboardPro.Forward = Forward;
+  BillboardPro.Rotation = Rotation;
+  BillboardPro.Scale = Scale;
+  BillboardPro.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawBillboardProUpdate(int32 HandleID, const FRlDrawBillboardPro& InShape, int32& OutHandleID, FRlDrawBillboardPro& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawBillboardPro();
-    return;
+FRlDrawBillboardPro URaylibUEBPLibrary::DrawBillboardProUpdate(const FRlDrawBillboardPro& BillboardPro) {
+  FRlDrawBillboardPro OutBillboardPro;
+  if (BillboardPro.CommandID < 0) {
+    OutBillboardPro.CommandID = -1;
+    OutBillboardPro = FRlDrawBillboardPro();
+    return OutBillboardPro;
   }
 
+  OutBillboardPro = BillboardPro;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = BillboardPro.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawBillboardPro;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.SourcePos = InShape.SourceRec;
-  UpdateCmd.Position3D = InShape.Position;
-  UpdateCmd.RotationAxis = InShape.Up;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = BillboardPro.TexturePath;
+  UpdateCmd.SourcePos = BillboardPro.SourceRec;
+  UpdateCmd.Position3D = BillboardPro.Position;
+  UpdateCmd.RotationAxis = BillboardPro.Up;
+  UpdateCmd.Scale3D = FVector(BillboardPro.Scale);
+  UpdateCmd.Rotation = BillboardPro.Rotation;
+  UpdateCmd.Color = BillboardPro.Tint;
+  OutBillboardPro.CommandID = rlCmdBuf.Update(UpdateCmd) ? BillboardPro.CommandID : -1; 
+  return OutBillboardPro;
 }
 
-void URaylibUEBPLibrary::DrawTexture(const FString& TexturePath, int32 PosX, int32 PosY, FLinearColor Tint, int32& OutHandleID, FRlDrawTexture& OutShape) {
+void URaylibUEBPLibrary::DrawTexture(const FString& TexturePath, int32 PosX, int32 PosY, FLinearColor Tint, FRlDrawTexture& Texture) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTexture;
   Cmd.TexturePath = TexturePath;
   Cmd.Position = FIntPoint(PosX, PosY);
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.PosX = PosX;
-  OutShape.PosY = PosY;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  Texture.CommandID = ID;
+  Texture.TexturePath = TexturePath;
+  Texture.PosX = PosX;
+  Texture.PosY = PosY;
+  Texture.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureUpdate(int32 HandleID, const FRlDrawTexture& InShape, int32& OutHandleID, FRlDrawTexture& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTexture();
-    return;
+FRlDrawTexture URaylibUEBPLibrary::DrawTextureUpdate(const FRlDrawTexture& Texture) {
+  FRlDrawTexture OutTexture;
+  if (Texture.CommandID < 0) {
+    OutTexture.CommandID = -1;
+    OutTexture = FRlDrawTexture();
+    return OutTexture;
   }
 
+  OutTexture = Texture;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = Texture.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTexture;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.Position = FIntPoint(InShape.PosX, InShape.PosY);
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = Texture.TexturePath;
+  UpdateCmd.Position = FIntPoint(Texture.PosX, Texture.PosY);
+  UpdateCmd.Color = Texture.Tint;
+  OutTexture.CommandID = rlCmdBuf.Update(UpdateCmd) ? Texture.CommandID : -1; 
+  return OutTexture;
 }
 
-void URaylibUEBPLibrary::DrawTextureV(const FString& TexturePath, FIntPoint Position, FLinearColor Tint, int32& OutHandleID, FRlDrawTextureV& OutShape) {
+void URaylibUEBPLibrary::DrawTextureV(const FString& TexturePath, FIntPoint Position, FLinearColor Tint, FRlDrawTextureV& TextureV) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextureV;
   Cmd.TexturePath = TexturePath;
   Cmd.Position = Position;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.Position = Position;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  TextureV.CommandID = ID;
+  TextureV.TexturePath = TexturePath;
+  TextureV.Position = Position;
+  TextureV.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureVUpdate(int32 HandleID, const FRlDrawTextureV& InShape, int32& OutHandleID, FRlDrawTextureV& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextureV();
-    return;
+FRlDrawTextureV URaylibUEBPLibrary::DrawTextureVUpdate(const FRlDrawTextureV& TextureV) {
+  FRlDrawTextureV OutTextureV;
+  if (TextureV.CommandID < 0) {
+    OutTextureV.CommandID = -1;
+    OutTextureV = FRlDrawTextureV();
+    return OutTextureV;
   }
 
+  OutTextureV = TextureV;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextureV.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextureV;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = TextureV.TexturePath;
+  UpdateCmd.Position = TextureV.Position;
+  UpdateCmd.Color = TextureV.Tint;
+  OutTextureV.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextureV.CommandID : -1; 
+  return OutTextureV;
 }
 
-void URaylibUEBPLibrary::DrawTextureEx(const FString& TexturePath, FIntPoint Position, float Rotation, float Scale, FLinearColor Tint, int32& OutHandleID, FRlDrawTextureEx& OutShape) {
+void URaylibUEBPLibrary::DrawTextureEx(const FString& TexturePath, FIntPoint Position, float Rotation, float Scale, FLinearColor Tint, FRlDrawTextureEx& TextureEx) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextureEx;
   Cmd.TexturePath = TexturePath;
@@ -2885,80 +2629,74 @@ void URaylibUEBPLibrary::DrawTextureEx(const FString& TexturePath, FIntPoint Pos
   Cmd.Rotation = Rotation;
   Cmd.Scale3D = FVector(Scale);
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.Position = Position;
-  OutShape.Rotation = Rotation;
-  OutShape.Scale = Scale;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  TextureEx.CommandID = ID;
+  TextureEx.TexturePath = TexturePath;
+  TextureEx.Position = Position;
+  TextureEx.Rotation = Rotation;
+  TextureEx.Scale = Scale;
+  TextureEx.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureExUpdate(int32 HandleID, const FRlDrawTextureEx& InShape, int32& OutHandleID, FRlDrawTextureEx& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextureEx();
-    return;
+FRlDrawTextureEx URaylibUEBPLibrary::DrawTextureExUpdate(const FRlDrawTextureEx& TextureEx) {
+  FRlDrawTextureEx OutTextureEx;
+  if (TextureEx.CommandID < 0) {
+    OutTextureEx.CommandID = -1;
+    OutTextureEx = FRlDrawTextureEx();
+    return OutTextureEx;
   }
 
+  OutTextureEx = TextureEx;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextureEx.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextureEx;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.Position = InShape.Position;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Scale3D = FVector(InShape.Scale);
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = TextureEx.TexturePath;
+  UpdateCmd.Position = TextureEx.Position;
+  UpdateCmd.Rotation = TextureEx.Rotation;
+  UpdateCmd.Scale3D = FVector(TextureEx.Scale);
+  UpdateCmd.Color = TextureEx.Tint;
+  OutTextureEx.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextureEx.CommandID : -1; 
+  return OutTextureEx;
 }
 
-void URaylibUEBPLibrary::DrawTextureRec(const FString& TexturePath, FIntPoint SourceRec, FIntPoint DestRec, FLinearColor Tint, int32& OutHandleID, FRlDrawTextureRec& OutShape) {
+void URaylibUEBPLibrary::DrawTextureRec(const FString& TexturePath, FIntPoint SourceRec, FIntPoint DestRec, FLinearColor Tint, FRlDrawTextureRec& TextureRec) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextureRec;
   Cmd.TexturePath = TexturePath;
   Cmd.SourcePos = SourceRec;
   Cmd.Size = DestRec;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.SourceRec = SourceRec;
-  OutShape.DestRec = DestRec;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  TextureRec.CommandID = ID;
+  TextureRec.TexturePath = TexturePath;
+  TextureRec.SourceRec = SourceRec;
+  TextureRec.DestRec = DestRec;
+  TextureRec.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureRecUpdate(int32 HandleID, const FRlDrawTextureRec& InShape, int32& OutHandleID, FRlDrawTextureRec& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextureRec();
-    return;
+FRlDrawTextureRec URaylibUEBPLibrary::DrawTextureRecUpdate(const FRlDrawTextureRec& TextureRec) {
+  FRlDrawTextureRec OutTextureRec;
+  if (TextureRec.CommandID < 0) {
+    OutTextureRec.CommandID = -1;
+    OutTextureRec = FRlDrawTextureRec();
+    return OutTextureRec;
   }
 
+  OutTextureRec = TextureRec;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextureRec.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextureRec;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.SourcePos = InShape.SourceRec;
-  UpdateCmd.Size = InShape.DestRec;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = TextureRec.TexturePath;
+  UpdateCmd.SourcePos = TextureRec.SourceRec;
+  UpdateCmd.Size = TextureRec.DestRec;
+  UpdateCmd.Color = TextureRec.Tint;
+  OutTextureRec.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextureRec.CommandID : -1; 
+  return OutTextureRec;
 }
 
-void URaylibUEBPLibrary::DrawTexturePro(const FString& TexturePath, FIntPoint SourceRec, FIntPoint DestRec, FIntPoint Origin, float Rotation, FLinearColor Tint, int32& OutHandleID, FRlDrawTexturePro& OutShape) {
+void URaylibUEBPLibrary::DrawTexturePro(const FString& TexturePath, FIntPoint SourceRec, FIntPoint DestRec, FIntPoint Origin, float Rotation, FLinearColor Tint, FRlDrawTexturePro& TexturePro) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTexturePro;
   Cmd.TexturePath = TexturePath;
@@ -2967,43 +2705,40 @@ void URaylibUEBPLibrary::DrawTexturePro(const FString& TexturePath, FIntPoint So
   Cmd.StartPos = Origin;
   Cmd.Rotation = Rotation;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.SourceRec = SourceRec;
-  OutShape.DestRec = DestRec;
-  OutShape.Origin = Origin;
-  OutShape.Rotation = Rotation;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  TexturePro.CommandID = ID;
+  TexturePro.TexturePath = TexturePath;
+  TexturePro.SourceRec = SourceRec;
+  TexturePro.DestRec = DestRec;
+  TexturePro.Origin = Origin;
+  TexturePro.Rotation = Rotation;
+  TexturePro.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureProUpdate(int32 HandleID, const FRlDrawTexturePro& InShape, int32& OutHandleID, FRlDrawTexturePro& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTexturePro();
-    return;
+FRlDrawTexturePro URaylibUEBPLibrary::DrawTextureProUpdate(const FRlDrawTexturePro& TexturePro) {
+  FRlDrawTexturePro OutTexturePro;
+  if (TexturePro.CommandID < 0) {
+    OutTexturePro.CommandID = -1;
+    OutTexturePro = FRlDrawTexturePro();
+    return OutTexturePro;
   }
 
+  OutTexturePro = TexturePro;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TexturePro.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTexturePro;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.SourcePos = InShape.SourceRec;
-  UpdateCmd.Size = InShape.DestRec;
-  UpdateCmd.StartPos = InShape.Origin;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = TexturePro.TexturePath;
+  UpdateCmd.SourcePos = TexturePro.SourceRec;
+  UpdateCmd.Size = TexturePro.DestRec;
+  UpdateCmd.StartPos = TexturePro.Origin;
+  UpdateCmd.Rotation = TexturePro.Rotation;
+  UpdateCmd.Color = TexturePro.Tint;
+  OutTexturePro.CommandID = rlCmdBuf.Update(UpdateCmd) ? TexturePro.CommandID : -1; 
+  return OutTexturePro;
 }
 
-void URaylibUEBPLibrary::DrawTextureNPatch(const FString& TexturePath, const TArray<FIntPoint>& NPatchInfo, FIntPoint Dest, float Rotation, FLinearColor Tint, int32& OutHandleID, FRlDrawTextureNPatch& OutShape) {
+void URaylibUEBPLibrary::DrawTextureNPatch(const FString& TexturePath, const TArray<FIntPoint>& NPatchInfo, FIntPoint Dest, float Rotation, FLinearColor Tint, FRlDrawTextureNPatch& TextureNPatch) {
   FRlDrawCommand Cmd;
   Cmd.Type = ERlDrawType::DrawTextureNPatch;
   Cmd.TexturePath = TexturePath;
@@ -3011,53 +2746,50 @@ void URaylibUEBPLibrary::DrawTextureNPatch(const FString& TexturePath, const TAr
   Cmd.Position = Dest;
   Cmd.Rotation = Rotation;
   Cmd.Color = Tint;
-  if (Cmd.Color.A == 0.f) Cmd.Color.A = 1.f;
   int32 ID = rlCmdBuf.Add(Cmd);
-  OutHandleID = ID;
-  OutShape.TexturePath = TexturePath;
-  OutShape.NPatchInfo = NPatchInfo;
-  OutShape.Dest = Dest;
-  OutShape.Rotation = Rotation;
-  OutShape.Tint = Tint;
-  OutShape.CommandID = ID;
+
+  TextureNPatch.CommandID = ID;
+  TextureNPatch.TexturePath = TexturePath;
+  TextureNPatch.NPatchInfo = NPatchInfo;
+  TextureNPatch.Dest = Dest;
+  TextureNPatch.Rotation = Rotation;
+  TextureNPatch.Tint = Tint;
 }
 
-void URaylibUEBPLibrary::DrawTextureNPatchUpdate(int32 HandleID, const FRlDrawTextureNPatch& InShape, int32& OutHandleID, FRlDrawTextureNPatch& OutShape) {
-  if (HandleID < 0) {
-    OutHandleID = -1;
-    OutShape = FRlDrawTextureNPatch();
-    return;
+FRlDrawTextureNPatch URaylibUEBPLibrary::DrawTextureNPatchUpdate(const FRlDrawTextureNPatch& TextureNPatch) {
+  FRlDrawTextureNPatch OutTextureNPatch;
+  if (TextureNPatch.CommandID < 0) {
+    OutTextureNPatch.CommandID = -1;
+    OutTextureNPatch = FRlDrawTextureNPatch();
+    return OutTextureNPatch;
   }
 
+  OutTextureNPatch = TextureNPatch;
   FRlDrawCommand UpdateCmd;
+  UpdateCmd.CommandID = TextureNPatch.CommandID;
   UpdateCmd.Type = ERlDrawType::DrawTextureNPatch;
-  UpdateCmd.TexturePath = InShape.TexturePath;
-  UpdateCmd.Points = InShape.NPatchInfo;
-  UpdateCmd.Position = InShape.Dest;
-  UpdateCmd.Rotation = InShape.Rotation;
-  UpdateCmd.Color = InShape.Tint;
-  if (UpdateCmd.Color.A == 0.f) UpdateCmd.Color.A = 1.f;
-
-  bool bSuccess = rlCmdBuf.Update(HandleID, UpdateCmd);
-
-  OutHandleID = bSuccess ? HandleID : -1;
-  OutShape = InShape;
-  OutShape.CommandID = OutHandleID;
+  UpdateCmd.TexturePath = TextureNPatch.TexturePath;
+  UpdateCmd.Points = TextureNPatch.NPatchInfo;
+  UpdateCmd.Position = TextureNPatch.Dest;
+  UpdateCmd.Rotation = TextureNPatch.Rotation;
+  UpdateCmd.Color = TextureNPatch.Tint;
+  OutTextureNPatch.CommandID = rlCmdBuf.Update(UpdateCmd) ? TextureNPatch.CommandID : -1; 
+  return OutTextureNPatch;
 }
 
-void URaylibUEBPLibrary::rlCreateDrawCommand(FRlDrawCommand InCommand, int32& OutHandleID, FRlDrawCommand& OutCommand) {
+void URaylibUEBPLibrary::rlCreateDrawCommand(FRlDrawCommand InCommand, FRlDrawCommand& OutCommand) {
   FRlDrawCommand NewCmd = InCommand;
   if (NewCmd.Color.A == 0) {
   NewCmd.Color.A = 255;
   }
-  OutHandleID = rlCmdBuf.Add(NewCmd);
-  NewCmd.CommandID = OutHandleID;
+  OutCommand.CommandID = rlCmdBuf.Add(NewCmd);
+  NewCmd.CommandID = InCommand.CommandID;
   OutCommand = NewCmd;
 }
 
-void URaylibUEBPLibrary::rlUpdateDrawCommand(int32 HandleID, FRlDrawCommand InCommand, int32& OutHandleID, FRlDrawCommand& OutCommand) {
-  if (HandleID <= 0) {
-  UE_LOG(LogTemp, Warning, TEXT("rlUpdateDrawCommand invalid HandleID %d"), HandleID);
+void URaylibUEBPLibrary::rlUpdateDrawCommand(FRlDrawCommand InCommand, FRlDrawCommand& OutCommand) {
+  if (InCommand.CommandID <= 0) {
+  UE_LOG(LogTemp, Warning, TEXT("rlUpdateDrawCommand invalid CommandID  %d"), InCommand.CommandID );
   OutCommand = InCommand;
   return;
   }
@@ -3066,26 +2798,24 @@ void URaylibUEBPLibrary::rlUpdateDrawCommand(int32 HandleID, FRlDrawCommand InCo
   if (UpdateCmd.Color.A == 0) {
   UpdateCmd.Color.A = 255;
   }
-  UpdateCmd.CommandID = HandleID;
+  UpdateCmd.CommandID = InCommand.CommandID ;
   if (InCommand.Color.A == 0) {
   InCommand.Color.A = 255;
   }
-  if (rlCmdBuf.Update(HandleID, UpdateCmd)) {
-  OutHandleID = HandleID;
+  if (rlCmdBuf.Update(UpdateCmd)) {
   OutCommand = UpdateCmd;
   } else {
-  UE_LOG(LogTemp, Warning, TEXT("rlUpdateDrawCommand failed for ID %d"), HandleID);
+  UE_LOG(LogTemp, Warning, TEXT("rlUpdateDrawCommand failed for ID %d"), InCommand.CommandID );
   }
 }
 
-void URaylibUEBPLibrary::rlGetDrawCommand(int32 HandleID, int32& OutHandleID, FRlDrawCommand& OutCommand) {
-  if (int32* IndexPtr = rlCmdBuf.IDToIndex.Find(HandleID)) {
-  int32 Index = *IndexPtr;
-  if (rlCmdBuf.rlDrawCommands.IsValidIndex(Index)) {
-    OutHandleID = Index;
-    OutCommand = rlCmdBuf.rlDrawCommands[Index];
-    return;
-  }
+void URaylibUEBPLibrary::rlGetDrawCommand(int32& CommandID , FRlDrawCommand& OutCommand) {
+  if (int32* IndexPtr = rlCmdBuf.IDToIndex.Find(CommandID )) {
+    int32 Index = *IndexPtr;
+    if (rlCmdBuf.rlDrawCommands.IsValidIndex(Index)) {
+      OutCommand = rlCmdBuf.rlDrawCommands[Index];
+      return;
+    }
   }
   OutCommand = FRlDrawCommand();
 }

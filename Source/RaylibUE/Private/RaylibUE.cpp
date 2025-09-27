@@ -90,12 +90,10 @@ void FRaylibUEModule::OnGameModeInitialized(AGameModeBase* aGameMode) {
 void FRaylibUEModule::InitRaylibOverlay() {
   GetGameWindowPosition();
 
-  // FLAG_WINDOW_HIDDEN 
   SetConfigFlags(FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TRANSPARENT);
   InitWindow(rlWindowSize.X, rlWindowSize.Y, "RaylibUE overlay");
   SetWindowPosition(ueWindowPosition.X, ueWindowPosition.Y);
   SetTargetFPS(60);
-  //rlRenderTarget = LoadRenderTexture(rlWindowSize.X, rlWindowSize.Y);
 
   // WinAPI
   hwndRaylib = (HWND)GetWindowHandle();

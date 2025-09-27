@@ -259,6 +259,6 @@ struct FRlDrawCommandBuffer {
 
   int32 Add(FRlDrawCommand& Cmd);
   void Clear();
-  bool Update(int32 HandleID, const FRlDrawCommand& Cmd);
-  bool Remove(int32 HandleID);
+  bool Update(const FRlDrawCommand& Cmd);
+  bool Remove(int32 CommandID);
 };
