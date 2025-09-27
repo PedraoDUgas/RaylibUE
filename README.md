@@ -59,7 +59,7 @@ URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yell
 <br/><br/>
 > __Dependencies :__
 >- Windows *(WinAPI overlay)*
->- UE 5.6.1 *(Can be built for earlier Unreal Engine versions; not tested)*.
+>- Unreal Engine 4.25+ and 5.0+ *(Tested on 4.27.2 and 5.6.1)*.
 >- Raylib library is bundled.
 >- Visual Studio or VS Code to build from source, more information at [Unreal Engine: Setting Up Visual Studio](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine) and [Setting Up Visual Studio for Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5-6-documentation).
 
