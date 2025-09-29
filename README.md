@@ -49,7 +49,7 @@ URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yell
 
 ##  Installing from Releases page
 
-If you are using Unreal Engine 4.27.2 or 5.6.1 and don't want to build the plugin from source, you can go to the 
+If you are using Unreal Engine **4.27.2** or **5.6.1** and don't want to build the plugin from source, you can go to the 
 [Releases](https://github.com/DarknessFX/RaylibUE/releases/latest) page and download the ready-to-use binary version.<br/>
 Just unzip the file into your project folder and open your .uproject.<br/>
 The engine will enable and load RaylibUE, you can start using it immediately.<br/>
@@ -72,10 +72,14 @@ The engine will enable and load RaylibUE, you can start using it immediately.<br
 
 ##  Quick start
 
+<img src=".git_img/screenshot_08.png" alt="RaylibUE" width="640" /><br/>
+
 1. Open Level Blueprint.
 2. Event BeginPlay, add a new node: Raylib DrawText.
-3. Set DrawText node to PosX 30, PosY 30, Text "Hello Raylib", FontSize: 64, Color: Green
-4. Play.
+3. Set DrawText node to Text "Hello Raylib", PosX 30, PosY 30, FontSize: 64, Color: Green
+4. Play in a **New Editor Window (PIE)**.
+
+<img src=".git_img/screenshot_09.png" alt="RaylibUE" width="640" /><br/>
 
 Next Step: See the image below to make your text grow each frame.
 <img src=".git_img/screenshot_02.png" alt="RaylibUE" width="640" />
