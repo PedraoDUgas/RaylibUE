@@ -51,8 +51,9 @@ URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yell
 ##  Installing from Releases page
 
 If you are using Unreal Engine 4.27.2 or 5.6.1 and don't want to build the plugin from source, you can go to the 
-[Releases](/releases) page and download the ready-to-use binary version. Just unzip the file into your project 
-folder and open your .uproject. The engine will enable and load RaylibUE, you can start using it immediately.
+[Releases](https://github.com/DarknessFX/RaylibUE/releases/latest) page and download the ready-to-use binary version.<br/>
+Just unzip the file into your project folder and open your .uproject.<br/>
+The engine will enable and load RaylibUE, you can start using it immediately.<br/>
 
  ## Building from source
 
