@@ -43,9 +43,8 @@ RaylibUE plugin seamlessly bridges [Raylib](https://www.raylib.com/)'s powerful 
 - **C++ Friendly**: Static calls, e.g., `URaylibUEBPLibrary::DrawPixel(10, 10, FLinearColor::Red, ID, Shape);`.
 ```cpp
 #include "RaylibUEBPLibrary.h"
-int32 ID;
-FRlDrawText Shape;
-URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yellow, ID, Shape);
+FRlDrawText rlText;
+URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yellow, rlText);
 ```
 
 ##  Installing from Releases page
