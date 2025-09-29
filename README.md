@@ -12,7 +12,7 @@
 
            DarknessFX @ https://dfx.lv | X : @DrkFX
 
-# RaylibUE Plugin For Unreal Engine 5
+# RaylibUE Plugin For Unreal Engine
 
 <img src=".git_img/RaylibUE_banner.png" alt="RaylibUE" width="640" />
 
