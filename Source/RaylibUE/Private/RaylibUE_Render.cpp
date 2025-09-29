@@ -15,6 +15,9 @@ static Camera3D DefaultCamera = { {0,0,0}, {0,10,0}, {0,0,1}, 45.f };
 struct Scoped3DMode { Scoped3DMode() { BeginMode3D(DefaultCamera); } ~Scoped3DMode() { EndMode3D(); } };
 
 void FRaylibUEModule::RenderRaylibOverlay() {
+  float rlWinSizeX = (float)rlWindowSize.X;
+  float rlWinSizeY = (float)rlWindowSize.Y;
+
   BeginTextureMode(rlRenderTarget);
     ClearBackground(BLANK);
     for (const FRlDrawCommand& Cmd : rlDrawCommandsBuffer.rlDrawCommands) {
@@ -473,8 +476,8 @@ void FRaylibUEModule::RenderRaylibOverlay() {
     ClearBackground(BLANK);
     DrawTexturePro(
       rlRenderTarget.texture, 
-      { 0.0f, 0.0f, rlWindowSize.X, -rlWindowSize.Y }, 
-      { 0.0f, 0.0f, rlWindowSize.X, rlWindowSize.Y },
+      { 0.0f, 0.0f, rlWinSizeX, -rlWinSizeY },
+      { 0.0f, 0.0f, rlWinSizeX, rlWinSizeY },
       { 0.f, 0.f }, 0.0f, WHITE);
   EndDrawing();
 }
